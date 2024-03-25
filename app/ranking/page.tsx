@@ -25,7 +25,9 @@ export default async function Ranking() {
     const quantizations = ["INT8", "FP32"];
     const modes = ["GPU", "CPU", "NNAPI"];
 
-    let response = await axios.post<RankingEntry[]>('http://localhost:3030/phone/get/ranking', {models, quantizations, modes})
+    const queryString = `models=${models.join(',')}&quantizations=${quantizations.join(',')}&modes=${modes.join(',')}`;
+
+    let response = await axios.get<RankingEntry[]>(`http://localhost:3030/phone/get/ranking?${queryString}`)
     const ranking = response.data.filter(x => x.phone.brand_name !== "")
 
     return (
