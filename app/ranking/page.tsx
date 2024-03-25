@@ -1,12 +1,14 @@
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import React from "react"
+'use client'
+
+import React, { useState } from "react"
+import useRanking from "./hooks/useRanking"
+
 
 type Phone = {
     brand_name: string
 }
 
-type RankingEntry = {
+export type RankingEntry = {
     phone: Phone,
     results: RankingResultEntry[]
 }
@@ -19,41 +21,48 @@ type RankingResultEntry = {
 }
 
 
-export default async function Ranking() {
+export default function Ranking() {
 
-    const models = ["Mobilenet", "DeepLab"];
-    const quantizations = ["INT8", "FP32"];
-    const modes = ["GPU", "CPU", "NNAPI"];
+    const [models, setModels] = useState(["Mobilenet", "DeepLab"]);
+    const [quantizations, setQuantizations] = useState(["INT8", "FP32"]);
+    const [modes, setModes] = useState(["GPU", "CPU", "NNAPI"]);
 
-    const queryString = `models=${models.join(',')}&quantizations=${quantizations.join(',')}&modes=${modes.join(',')}`;
+    const { data: ranking, isLoading, isError, refetch, isRefetching } = useRanking(models, quantizations, modes)
 
-    let response = await axios.get<RankingEntry[]>(`http://localhost:3030/phone/get/ranking?${queryString}`)
-    const ranking = response.data.filter(x => x.phone.brand_name !== "")
+    if (isLoading || isRefetching)
+        return (
+            <div>Carregando</div>
+        )
+
+    if (isError || ranking === undefined)
+        return (
+            <div>Erro </div>
+        )
 
     return (
         <main className="min-h-screen p-24">
             <table className="flex-none table-auto border-collapse">
                 <thead>
                     <tr className="gap-x-3">
-                        <TableHeader text = "Smartphone" rowSpan={3}/>
+                        <TableHeader text="Smartphone" rowSpan={3} />
                         {
                             ranking.length > 0 &&
-                            models.map((model) => 
-                                <TableHeader text = {`${model}`} colSpan={quantizations.length * modes.length}/>
+                            models.map((model) =>
+                                <TableHeader text={`${model}`} colSpan={quantizations.length * modes.length} />
                             )
                         }
                     </tr>
                     <tr>
                         {
-                            repeatArray(quantizations, models.length).map(quantization => 
-                                <TableHeader text = {quantization} colSpan={modes.length}/>
+                            repeatArray(quantizations, models.length).map(quantization =>
+                                <TableHeader text={quantization} colSpan={modes.length} />
                             )
                         }
                     </tr>
                     <tr>
                         {
-                            repeatArray(modes, models.length*quantizations.length).map(mode => 
-                                <TableHeader text = {mode}/>
+                            repeatArray(modes, models.length * quantizations.length).map(mode =>
+                                <TableHeader text={mode} />
                             )
                         }
                     </tr>
@@ -61,15 +70,15 @@ export default async function Ranking() {
                 <tbody>
                     {
                         ranking.map(entry =>
-                                <tr>
-                                    <TableEntry text = {entry.phone.brand_name}/>
-                                    {
-                                        entry.results.map(result => 
-                                            <TableEntry text = {`${result.speed !== null ? result.speed: "-"}`}/>
-                                        )
-                                    }
-                                </tr>
-                            )
+                            <tr>
+                                <TableEntry text={entry.phone.brand_name} />
+                                {
+                                    entry.results.map(result =>
+                                        <TableEntry text={`${result.speed !== null ? result.speed : "-"}`} />
+                                    )
+                                }
+                            </tr>
+                        )
                     }
                 </tbody>
             </table>
@@ -84,7 +93,7 @@ type TableLineParams = {
     colSpan?: number
 }
 
-const TableHeader: React.FC<TableLineParams> = ({text, rowSpan = 1, colSpan = 1}) => {
+const TableHeader: React.FC<TableLineParams> = ({ text, rowSpan = 1, colSpan = 1 }) => {
     return (
         <th className="border-2 border-black" rowSpan={rowSpan} colSpan={colSpan}>
             <div className="text-black rounded-2xl p-5 text-center">
@@ -94,13 +103,13 @@ const TableHeader: React.FC<TableLineParams> = ({text, rowSpan = 1, colSpan = 1}
     )
 }
 
-const TableEntry: React.FC<TableLineParams> = ({text, rowSpan = 1, colSpan = 1}) => {
+const TableEntry: React.FC<TableLineParams> = ({ text, rowSpan = 1, colSpan = 1 }) => {
     return (
         <td className="border-2 border-black" rowSpan={rowSpan} colSpan={colSpan}>
             <div className="text-black rounded-2xl p-5 text-center">
                 {text}
             </div>
-            
+
         </td>
     )
 }
