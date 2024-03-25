@@ -1,4 +1,5 @@
 import axios from "axios"
+import { useRouter } from "next/navigation"
 import React from "react"
 
 type Phone = {
@@ -22,7 +23,7 @@ export default async function Ranking() {
 
     const models = ["Mobilenet", "DeepLab"];
     const quantizations = ["INT8", "FP32"];
-    const modes = ["NNAPI", "CPU"];
+    const modes = ["GPU", "CPU", "NNAPI"];
 
     let response = await axios.post<RankingEntry[]>('http://localhost:3030/phone/get/ranking', {models, quantizations, modes})
     const ranking = response.data.filter(x => x.phone.brand_name !== "")
@@ -32,14 +33,27 @@ export default async function Ranking() {
             <table className="flex-none table-auto border-collapse">
                 <thead>
                     <tr className="gap-x-3">
-                        <TableHeader text = "Smartphone"/>
+                        <TableHeader text = "Smartphone" rowSpan={3}/>
                         {
                             ranking.length > 0 &&
-                            ranking[0].results.map((result) => 
-                                <TableHeader text = {`${result.model} - ${result.quantization} - ${result.mode}`}/>
+                            models.map((model) => 
+                                <TableHeader text = {`${model}`} colSpan={quantizations.length * modes.length}/>
                             )
                         }
-
+                    </tr>
+                    <tr>
+                        {
+                            repeatArray(quantizations, models.length).map(quantization => 
+                                <TableHeader text = {quantization} colSpan={modes.length}/>
+                            )
+                        }
+                    </tr>
+                    <tr>
+                        {
+                            repeatArray(modes, models.length*quantizations.length).map(mode => 
+                                <TableHeader text = {mode}/>
+                            )
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -87,4 +101,8 @@ const TableEntry: React.FC<TableLineParams> = ({text, rowSpan = 1, colSpan = 1})
             
         </td>
     )
+}
+
+function repeatArray(arr: any[], n: number): any[] {
+    return Array.from({ length: n }, () => [...arr]).flat();
 }
