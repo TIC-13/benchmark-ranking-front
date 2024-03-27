@@ -42,16 +42,17 @@ export default function Ranking() {
     const [quantizations, setQuantizations] = useState(quantizationOptions.map(x => x.label));
     const [modes, setModes] = useState(modeOptions.map(x => x.label));
 
-    const { data: ranking, isLoading, isError, refetch, isRefetching } = useRanking(models, quantizations, modes)
+    const rankingQuery = useRanking(models, quantizations, modes)
+    const [ranking, setRanking] = useState<RankingEntry[] | undefined>(undefined)
 
-    if (isLoading || isRefetching)
+    useEffect(() => {
+        if(rankingQuery.data !== undefined)
+            setRanking(rankingQuery.data)
+    }, [rankingQuery.data])
+
+    if(ranking === undefined)
         return (
             <div>Carregando</div>
-        )
-
-    if (isError || ranking === undefined)
-        return (
-            <div>Erro </div>
         )
 
     return (
