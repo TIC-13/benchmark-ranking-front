@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import useRanking from "./hooks/useRanking"
-
+import DropdownMultiple from "../src/DropdownMultiple";
 
 type Phone = {
     brand_name: string
@@ -25,7 +25,13 @@ export default function Ranking() {
 
     const [models, setModels] = useState(["Mobilenet", "DeepLab"]);
     const [quantizations, setQuantizations] = useState(["INT8", "FP32"]);
-    const [modes, setModes] = useState(["GPU", "CPU", "NNAPI"]);
+    const [modes, setModes] = React.useState(["CPU", "GPU", "NNAPI"]);
+
+    const modeOptions = [
+        { key: "CPU", label: "CPU" },
+        { key: "GPU", label: "GPU" },
+        { key: "NNAPI", label: "NNAPI" }
+    ]
 
     const { data: ranking, isLoading, isError, refetch, isRefetching } = useRanking(models, quantizations, modes)
 
@@ -40,7 +46,16 @@ export default function Ranking() {
         )
 
     return (
-        <main className="min-h-screen p-24">
+        <main className="min-h-screen p-24 gap-20">
+            <div>
+                <span>Selecione os modos de rodar</span>
+                <DropdownMultiple
+                    selectedKeys={new Set(modes)}
+                    setSelectedKeys={(val: Set<string>) => setModes(Array.from(val))}
+                    options={modeOptions}
+                />
+            </div>
+
             <table className="flex-none table-auto border-collapse">
                 <thead>
                     <tr className="gap-x-3">
@@ -117,3 +132,4 @@ const TableEntry: React.FC<TableLineParams> = ({ text, rowSpan = 1, colSpan = 1 
 function repeatArray(arr: any[], n: number): any[] {
     return Array.from({ length: n }, () => [...arr]).flat();
 }
+
