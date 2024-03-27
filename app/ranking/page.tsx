@@ -20,18 +20,27 @@ type RankingResultEntry = {
     mode: string
 }
 
+const modeOptions = [
+    { key: "CPU", label: "CPU" },
+    { key: "GPU", label: "GPU" },
+    { key: "NNAPI", label: "NNAPI" }
+]
+
+const quantizationOptions = [
+    { key: "INT8", label: "INT8" },
+    { key: "FP32", label: "FP32" },
+]
+
+const modelsOptions = [
+    { key: "Mobilenet", label: "Mobilenet" },
+    { key: "Deeplab", label: "Deeplab" },
+]
 
 export default function Ranking() {
 
-    const [models, setModels] = useState(["Mobilenet", "DeepLab"]);
-    const [quantizations, setQuantizations] = useState(["INT8", "FP32"]);
-    const [modes, setModes] = React.useState(["CPU", "GPU", "NNAPI"]);
-
-    const modeOptions = [
-        { key: "CPU", label: "CPU" },
-        { key: "GPU", label: "GPU" },
-        { key: "NNAPI", label: "NNAPI" }
-    ]
+    const [models, setModels] = useState(modelsOptions.map(x => x.label));
+    const [quantizations, setQuantizations] = useState(quantizationOptions.map(x => x.label));
+    const [modes, setModes] = useState(modeOptions.map(x => x.label));
 
     const { data: ranking, isLoading, isError, refetch, isRefetching } = useRanking(models, quantizations, modes)
 
@@ -48,6 +57,22 @@ export default function Ranking() {
     return (
         <main className="min-h-screen p-24 gap-20">
             <div>
+                <span>Selecione os modelos</span>
+                <DropdownMultiple
+                    selectedKeys={new Set(models)}
+                    setSelectedKeys={(val: Set<string>) => setModels(Array.from(val))}
+                    options={modelsOptions}
+                />
+            </div>
+            <div>
+                <span>Selecione as quantizações</span>
+                <DropdownMultiple
+                    selectedKeys={new Set(quantizations)}
+                    setSelectedKeys={(val: Set<string>) => setQuantizations(Array.from(val))}
+                    options={quantizationOptions}
+                />
+            </div>
+            <div>
                 <span>Selecione os modos de rodar</span>
                 <DropdownMultiple
                     selectedKeys={new Set(modes)}
@@ -55,13 +80,12 @@ export default function Ranking() {
                     options={modeOptions}
                 />
             </div>
-
             <table className="flex-none table-auto border-collapse">
                 <thead>
                     <tr className="gap-x-3">
                         <TableHeader text="Smartphone" rowSpan={3} />
                         {
-                            ranking.length > 0 &&
+                            ranking !== undefined && ranking.length > 0 &&
                             models.map((model) =>
                                 <TableHeader text={`${model}`} colSpan={quantizations.length * modes.length} />
                             )
@@ -84,7 +108,7 @@ export default function Ranking() {
                 </thead>
                 <tbody>
                     {
-                        ranking.map(entry =>
+                        (ranking ?? []).map(entry =>
                             <tr>
                                 <TableEntry text={entry.phone.brand_name} />
                                 {
