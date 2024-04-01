@@ -36,13 +36,19 @@ const modelsOptions = [
     { key: "Deeplab", label: "Deeplab" },
 ]
 
+const manufacturerOptions = [
+    { key: "Samsung", label: "Samsung" },
+    { key: "Motorola", label: "Motorola" }
+]
+
 export default function Ranking() {
 
     const [models, setModels] = useState(modelsOptions.map(x => x.label));
     const [quantizations, setQuantizations] = useState(quantizationOptions.map(x => x.label));
     const [modes, setModes] = useState(modeOptions.map(x => x.label));
+    const [manufacturers, setManufacturers] = useState(manufacturerOptions.map(x => x.label));
 
-    const rankingQuery = useRanking(models, quantizations, modes)
+    const rankingQuery = useRanking(models, quantizations, modes, manufacturers)
     const [ranking, setRanking] = useState<RankingEntry[] | undefined>(undefined)
 
     useEffect(() => {
@@ -79,6 +85,14 @@ export default function Ranking() {
                     selectedKeys={new Set(modes)}
                     setSelectedKeys={(val: Set<string>) => setModes(Array.from(val))}
                     options={modeOptions}
+                />
+            </div>
+            <div>
+                <span>Selecione as marcas</span>
+                <DropdownMultiple
+                    selectedKeys={new Set(manufacturers)}
+                    setSelectedKeys={(val: Set<string>) => setManufacturers(Array.from(val))}
+                    options={manufacturerOptions}
                 />
             </div>
             <table className="flex-none table-auto border-collapse">
