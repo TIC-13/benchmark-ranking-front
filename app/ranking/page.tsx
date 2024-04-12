@@ -5,7 +5,8 @@ import useRanking from "./hooks/useRanking"
 import DropdownMultiple from "../src/DropdownMultiple";
 
 type Phone = {
-    brand_name: string
+    brand_name: string,
+    phone_model: string
 }
 
 export type RankingEntry = {
@@ -32,13 +33,12 @@ const quantizationOptions = [
 ]
 
 const modelsOptions = [
-    { key: "Mobilenet", label: "Mobilenet" },
-    { key: "Deeplab", label: "Deeplab" },
+    { key: "Efficientnet", label: "Efficientnet" },
+    { key: "DeepLab v3", label: "DeepLab v3" },
 ]
 
 const manufacturerOptions = [
-    { key: "Samsung", label: "Samsung" },
-    { key: "Motorola", label: "Motorola" }
+    { key: "samsung", label: "samsung" },
 ]
 
 export default function Ranking() {
@@ -125,10 +125,10 @@ export default function Ranking() {
                     {
                         (ranking ?? []).map(entry =>
                             <tr>
-                                <TableEntry text={entry.phone.brand_name} />
+                                <TableEntry text={entry.phone.phone_model} />
                                 {
                                     entry.results.map(result =>
-                                        <TableEntry text={`${result.speed !== null ? result.speed : "-"}`} />
+                                        <TableEntry text={`${result.speed !== null ? (result.speed + " ms") : "-"}`} />
                                     )
                                 }
                             </tr>

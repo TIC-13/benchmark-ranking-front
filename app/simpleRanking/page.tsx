@@ -37,7 +37,7 @@ export default function Ranking() {
                     {
                         ranking.map((entry: any) =>
                             <tr>
-                                <TableEntry text={`${entry.phone.brand_name}`} />
+                                <TableEntry text={`${entry.phone.phone_model}`} />
                                 {
                                     runningModes.map(mode => 
                                         <TableEntry text={
