@@ -4,6 +4,16 @@ import React from "react"
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+
 export default function Ranking() {
 
 
@@ -22,37 +32,39 @@ export default function Ranking() {
 
     return (
         <main className="min-h-screen p-24 gap-20">
-            <table className="flex-none table-auto border-collapse">
-                <thead>
-                    <tr className="gap-x-3">
-                        <TableHeader text="Smartphone" rowSpan={1} />
+            <Table>
+                <TableCaption>Ranking de desempenho de telefones no aplicativo AI Benchmarking</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Smartphone</TableHead>
                         {
                             runningModes.map(mode =>
-                                <TableHeader text={`${mode}`} />
+                                <TableHead>{`${mode}`}</TableHead>
                             )
                         }
-                    </tr>
-                </thead>
-                <tbody>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
                     {
                         ranking.map((entry: any) =>
-                            <tr>
-                                <TableEntry text={`${entry.phone.phone_model}`} />
+                            <TableRow>
+                                <TableCell>{`${entry.phone.phone_model}`}</TableCell>
                                 {
-                                    runningModes.map(mode => 
-                                        <TableEntry text={
-                                            entry[mode] !== null? 
-                                                `${entry[mode]} ms`: 
-                                                "-"
+                                    runningModes.map(mode =>
+                                        <TableCell>
+                                            {
+                                                entry[mode] !== null ?
+                                                    `${entry[mode]} ms` :
+                                                    "-"
                                             }
-                                        />
+                                        </TableCell>
                                     )
                                 }
-                            </tr>
+                            </TableRow>
                         )
                     }
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         </main>
 
     )
@@ -62,27 +74,6 @@ type TableLineParams = {
     text: string,
     rowSpan?: number,
     colSpan?: number
-}
-
-const TableHeader: React.FC<TableLineParams> = ({ text, rowSpan = 1, colSpan = 1 }) => {
-    return (
-        <th className="border-2 border-black" rowSpan={rowSpan} colSpan={colSpan}>
-            <div className="text-black rounded-2xl p-5 text-center">
-                {text}
-            </div>
-        </th>
-    )
-}
-
-const TableEntry: React.FC<TableLineParams> = ({ text, rowSpan = 1, colSpan = 1 }) => {
-    return (
-        <td className="border-2 border-black" rowSpan={rowSpan} colSpan={colSpan}>
-            <div className="text-black rounded-2xl p-5 text-center">
-                {text}
-            </div>
-
-        </td>
-    )
 }
 
 function repeatArray(arr: any[], n: number): any[] {
