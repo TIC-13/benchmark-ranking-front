@@ -4,22 +4,46 @@ import React from "react"
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { DataTable } from "./data-table";
+import { Inference, Phone, columns } from "./columns";
+
+const mockData: Inference[] = [
+    {
+        phone: {
+            id: 1,
+            phone_model: "Samsung A14",
+            brand_name: "samsung"
+        },
+        CPU: 30,
+        GPU: 15, 
+        NNAPI: 20
+    },
+    {
+        phone: {
+            id: 1,
+            phone_model: "Xiaomi MI13",
+            brand_name: "xiaomi"
+        },
+        CPU: 20,
+        GPU: 22, 
+        NNAPI: 41
+    },
+    {
+        phone: {
+            id: 1,
+            phone_model: "Moto G30",
+            brand_name: "motorola"
+        },
+        CPU: 25,
+        GPU: 17, 
+        NNAPI: 16
+    },
+]
+
 
 export default function Ranking() {
 
-
-    const runningModes = ["CPU", "GPU", "NNAPI"]
-
-    const { isLoading, data: ranking } = useQuery({
+    const { isLoading, data: ranking } = useQuery<Inference[]>({
         queryKey: ["simpleRanking"],
         queryFn: async () => (await axios.get(`http://localhost:3030/phone/get/simpleRanking`)).data,
         retry: false,
@@ -31,52 +55,10 @@ export default function Ranking() {
         )
 
     return (
-        <main className="min-h-screen p-24 gap-20">
-            <Table>
-                <TableCaption>Ranking de desempenho de telefones no aplicativo AI Benchmarking</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Smartphone</TableHead>
-                        {
-                            runningModes.map(mode =>
-                                <TableHead>{`${mode}`}</TableHead>
-                            )
-                        }
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {
-                        ranking.map((entry: any) =>
-                            <TableRow>
-                                <TableCell>{`${entry.phone.phone_model}`}</TableCell>
-                                {
-                                    runningModes.map(mode =>
-                                        <TableCell>
-                                            {
-                                                entry[mode] !== null ?
-                                                    `${entry[mode]} ms` :
-                                                    "-"
-                                            }
-                                        </TableCell>
-                                    )
-                                }
-                            </TableRow>
-                        )
-                    }
-                </TableBody>
-            </Table>
-        </main>
-
+        <div className="container mx-auto py-10">
+            <DataTable columns={columns} data={mockData} />
+        </div>
     )
 }
 
-type TableLineParams = {
-    text: string,
-    rowSpan?: number,
-    colSpan?: number
-}
-
-function repeatArray(arr: any[], n: number): any[] {
-    return Array.from({ length: n }, () => [...arr]).flat();
-}
 
