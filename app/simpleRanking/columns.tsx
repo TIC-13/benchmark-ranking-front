@@ -43,6 +43,7 @@ function getRowValue(pickedRow: string) {
         return (
             <Button
                 variant="ghost"
+                className="italic"
             >
                 {value ? value + " ms" : "-"}
             </Button>
@@ -54,13 +55,14 @@ function getHeader(label: string) {
     return ({ column }: { column: Column<Inference> }) => {
 
         const sortStatus = column.getIsSorted()
+        const isSelected = sortStatus !== false
         const iconClass = "ml-2 h-4 w-4"
 
         const colors =
-            sortStatus !== false ?
+            isSelected ?
                 {
-                    background: "primary",
-                    foreground: "primary-foreground"
+                    background: "secordary",
+                    foreground: "secondary-foreground"
                 } :
                 {
                     background: "undefined",
@@ -69,8 +71,8 @@ function getHeader(label: string) {
 
         return (
             <Button
-                variant={sortStatus !== false ? "default" : "ghost"}
-                className={`bg-${colors.background} text-${colors.foreground}`}
+                variant={isSelected ? "default" : "ghost"}
+                //className={`bg-${colors.background} text-${colors.foreground}`}
                 onClick={() => column.toggleSorting(sortStatus === "asc")}
             >
                 {label}
