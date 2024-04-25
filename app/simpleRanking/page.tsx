@@ -85,7 +85,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 <Button
                     onClick={onRefetch}
                     className="max-w-xs"
-                    variant="outline"
+                    variant="default"
                 >
                     Aplicar filtros
                 </Button>
