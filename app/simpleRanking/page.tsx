@@ -11,20 +11,26 @@ import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
 import useModels from "./hooks/useModels";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
 
 type Selectable = {
     name: string,
     isSelected: boolean
 }
 
-export default function Ranking() {
+export default function DataQueryLayer() {
     const modelsQuery = useModels()
 
     if (modelsQuery.isLoading || modelsQuery.data === undefined)
         return <LoadingFullScreen />
 
     return (
-        <RankingComponents
+        <PageLayer
             modelsList={modelsQuery.data.map((x: string) => {
                 return { name: x, isSelected: true }
             })}
@@ -32,27 +38,19 @@ export default function Ranking() {
     )
 }
 
-type RankingProps = {
+type PageLayerProps = {
     modelsList: Selectable[]
 }
 
-function RankingComponents({ modelsList }: RankingProps) {
+function PageLayer({ modelsList }: PageLayerProps) {
 
     const [models, setModels] = useState(modelsList)
 
     const [modelsToFetch, setModelsToFetch] = useState(modelsList)
 
-    const rankingQuery = useSimpleRanking(
-        modelsToFetch.filter(x => x.isSelected)
-            .map(x => x.name)
-    )
-
     const onRefetch = () => {
         setModelsToFetch(models)
     }
-
-    if (rankingQuery.isLoading || rankingQuery.data === undefined)
-        return <LoadingFullScreen />
 
     return (
         <MainContainer>
@@ -69,10 +67,29 @@ function RankingComponents({ modelsList }: RankingProps) {
                     </Badge>
                 }
             </div>
-            <DataTable columns={columns} data={rankingQuery.data} />
+            <Ranking models={modelsToFetch}/>
         </MainContainer>
     )
+}
 
+type RankingLayerProps = {
+    models: Selectable[]
+}
+
+function Ranking({models}: RankingLayerProps) {
+
+    const rankingQuery = useSimpleRanking(
+        models.filter(x => x.isSelected)
+            .map(x => x.name)
+    )
+
+    if(rankingQuery.isLoading || rankingQuery.data === undefined)
+        return <LoadingFullScreen />
+
+    return (
+        <DataTable columns={columns} data={rankingQuery.data}/>
+    )
+    
 }
 
 type SelectionProps = {
@@ -82,24 +99,29 @@ type SelectionProps = {
 
 function Selection({ data, setData }: SelectionProps) {
     return (
-        <div className="flex flex-row gap-x-1 gap-y-1 flex-wrap">
-            {
-                data.map((x, idx) =>
-                    <Badge
-                        variant={x.isSelected ? "default" : "outline"}
-                        onClick={() =>
-                            setData((prev) => {
-                                const arr = [...prev]
-                                arr[idx] = { name: x.name, isSelected: !prev[idx].isSelected }
-                                return arr
-                            })
+        <Accordion type="single" collapsible>
+            <AccordionItem value="item-1">
+                <AccordionTrigger>Selecionar modelos</AccordionTrigger>
+                <AccordionContent className="flex flex-row gap-x-1 gap-y-1 flex-wrap">
+                        {
+                            data.map((x, idx) =>
+                                <Badge
+                                    variant={x.isSelected ? "default" : "outline"}
+                                    onClick={() =>
+                                        setData((prev) => {
+                                            const arr = [...prev]
+                                            arr[idx] = { name: x.name, isSelected: !prev[idx].isSelected }
+                                            return arr
+                                        })
+                                    }
+                                >
+                                    {x.name}
+                                </Badge>
+                            )
                         }
-                    >
-                        {x.name}
-                    </Badge>
-                )
-            }
-        </div>
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
     );
 }
 
