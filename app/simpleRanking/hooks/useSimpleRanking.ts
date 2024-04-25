@@ -2,15 +2,14 @@ import { QueryKey, UndefinedInitialDataOptions, useQuery } from "@tanstack/react
 import { Inference } from "../columns";
 import axios from "axios";
 
-export default function useSimpleRanking(models: string[], options?: Partial<UndefinedInitialDataOptions<Inference[], Error, Inference[], QueryKey>>){
+export default function useSimpleRanking(models: string[], quantizations: string[], options?: Partial<UndefinedInitialDataOptions<Inference[], Error, Inference[], QueryKey>>){
     return useQuery<Inference[]>({
-        queryKey: ["simpleRanking", models],
+        queryKey: ["simpleRanking", models, quantizations],
         queryFn: async ({queryKey}) => {
             const models = queryKey[1] as string[]
-            console.log("MODELS", models)
+            const quantizations = queryKey[2] as string[]
 
-            const queryString = `models=${models.join(',')}`;
-            console.log(queryString)
+            const queryString = `models=${models.join(',')}&quantizations=${quantizations.join(',')}`;
 
             return (await axios.get(`http://localhost:3030/phone/get/simpleRanking?${queryString}`)).data
         },

@@ -17,6 +17,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import useQuantizations from "./hooks/useQuantizations";
 
 type Selectable = {
     name: string,
@@ -25,8 +26,10 @@ type Selectable = {
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
+    const quantizationsQuery = useQuantizations()
 
-    if (modelsQuery.isLoading || modelsQuery.data === undefined)
+    if (modelsQuery.isLoading || quantizationsQuery.isLoading ||
+        modelsQuery.data === undefined || quantizationsQuery.data === undefined)
         return <LoadingFullScreen />
 
     return (
@@ -34,94 +37,122 @@ export default function DataQueryLayer() {
             modelsList={modelsQuery.data.map((x: string) => {
                 return { name: x, isSelected: true }
             })}
+            quantizationsList={quantizationsQuery.data.map((x: string) => {
+                return { name: x, isSelected: true }
+            })}
         />
     )
 }
 
 type PageLayerProps = {
-    modelsList: Selectable[]
+    modelsList: Selectable[],
+    quantizationsList: Selectable[],
 }
 
-function PageLayer({ modelsList }: PageLayerProps) {
+function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     const [models, setModels] = useState(modelsList)
+    const [quantizations, setQuantizations] = useState(quantizationsList)
 
     const [modelsToFetch, setModelsToFetch] = useState(modelsList)
+    const [quantizationsToFetch, setQuantizationsToFetch] = useState(quantizationsList)
+
+    const refreshPending =
+        !arraysOfSelectableEquals(models, modelsToFetch) ||
+        !arraysOfSelectableEquals(quantizations, quantizationsToFetch)
 
     const onRefetch = () => {
         setModelsToFetch(models)
+        setQuantizationsToFetch(quantizations)
     }
 
     return (
         <MainContainer>
             <TypographyH3 text="Ranking de aparelhos" />
-            <Selection data={models} setData={setModels} />
+            <Accordion type="single" collapsible>
+                <SelectionAccordionItem
+                    data={models}
+                    setData={setModels}
+                    title="Selecionar modelos"
+                />
+                <SelectionAccordionItem
+                    data={quantizations}
+                    setData={setQuantizations}
+                    title="Selecionar quantizações"
+                />
+            </Accordion>
             <div className="flex flex-row gap-x-5">
-                <Button onClick={onRefetch} className="max-w-xs" variant="outline">
+                <Button
+                    onClick={onRefetch}
+                    className="max-w-xs"
+                    variant="outline"
+                >
                     Aplicar filtros
                 </Button>
                 {
-                    !arraysOfSelectableEquals(models, modelsToFetch) &&
+                    refreshPending &&
                     <Badge variant="destructive">
                         Mudanças não salvas
                     </Badge>
                 }
             </div>
-            <Ranking models={modelsToFetch}/>
+            <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} />
         </MainContainer>
     )
 }
 
 type RankingLayerProps = {
-    models: Selectable[]
+    models: Selectable[],
+    quantizations: Selectable[]
 }
 
-function Ranking({models}: RankingLayerProps) {
+function Ranking({ models, quantizations }: RankingLayerProps) {
 
     const rankingQuery = useSimpleRanking(
         models.filter(x => x.isSelected)
-            .map(x => x.name)
+            .map(x => x.name),
+        quantizations.filter(x => x.isSelected)
+            .map(x => x.name),
     )
 
-    if(rankingQuery.isLoading || rankingQuery.data === undefined)
+    if (rankingQuery.isLoading || rankingQuery.data === undefined)
         return <LoadingFullScreen />
 
     return (
-        <DataTable columns={columns} data={rankingQuery.data}/>
+        <DataTable columns={columns} data={rankingQuery.data} />
     )
-    
+
 }
 
 type SelectionProps = {
     data: Selectable[],
-    setData: React.Dispatch<React.SetStateAction<Selectable[]>>
+    setData: React.Dispatch<React.SetStateAction<Selectable[]>>,
+    title: string
 }
 
-function Selection({ data, setData }: SelectionProps) {
+function SelectionAccordionItem({ data, setData, title }: SelectionProps) {
     return (
-        <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-                <AccordionTrigger>Selecionar modelos</AccordionTrigger>
-                <AccordionContent className="flex flex-row gap-x-1 gap-y-1 flex-wrap">
-                        {
-                            data.map((x, idx) =>
-                                <Badge
-                                    variant={x.isSelected ? "default" : "outline"}
-                                    onClick={() =>
-                                        setData((prev) => {
-                                            const arr = [...prev]
-                                            arr[idx] = { name: x.name, isSelected: !prev[idx].isSelected }
-                                            return arr
-                                        })
-                                    }
-                                >
-                                    {x.name}
-                                </Badge>
-                            )
-                        }
-                </AccordionContent>
-            </AccordionItem>
-        </Accordion>
+        <AccordionItem value={title}>
+            <AccordionTrigger>{title}</AccordionTrigger>
+            <AccordionContent className="flex flex-row gap-x-1 gap-y-1 flex-wrap">
+                {
+                    data.map((x, idx) =>
+                        <Badge
+                            variant={x.isSelected ? "default" : "outline"}
+                            onClick={() =>
+                                setData((prev) => {
+                                    const arr = [...prev]
+                                    arr[idx] = { name: x.name, isSelected: !prev[idx].isSelected }
+                                    return arr
+                                })
+                            }
+                        >
+                            {x.name}
+                        </Badge>
+                    )
+                }
+            </AccordionContent>
+        </AccordionItem>
     );
 }
 
