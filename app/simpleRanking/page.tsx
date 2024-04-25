@@ -69,7 +69,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     return (
         <MainContainer>
             <TypographyH3 text="Ranking de aparelhos" />
-            <Accordion type="single" collapsible>
+            <Accordion type="multiple" className="max-w-l">
                 <SelectionAccordionItem
                     data={models}
                     setData={setModels}
@@ -134,7 +134,7 @@ function SelectionAccordionItem({ data, setData, title }: SelectionProps) {
     return (
         <AccordionItem value={title}>
             <AccordionTrigger>{title}</AccordionTrigger>
-            <AccordionContent className="flex flex-row gap-x-1 gap-y-1 flex-wrap">
+            <AccordionContent className="flex flex-row gap-x-3 gap-y-3 flex-wrap">
                 {
                     data.map((x, idx) =>
                         <Badge
