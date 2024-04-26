@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
@@ -25,7 +25,9 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
 import useQuantizations from "./hooks/useQuantizations";
+import { Label } from "@/components/ui/label";
 
 type Selectable = {
     name: string,
@@ -82,7 +84,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     <CardTitle>Meus filtros</CardTitle>
                     <CardDescription>Selecione modelos e quantizações que serão usados para calcular os resultados</CardDescription>
                 </CardHeader>
-                <CardContent className = "flex flex-col gap-y-5">
+                <CardContent className="flex flex-col gap-y-5">
                     <Accordion type="multiple" className="max-w-l">
                         <SelectionAccordionItem
                             data={models}
@@ -148,9 +150,34 @@ type SelectionProps = {
 }
 
 function SelectionAccordionItem({ data, setData, title }: SelectionProps) {
+
+    const [checked, setChecked] = useState(true)
+
+    function onCheckedChange(newChecked: boolean){
+        setData(data.map(x => {
+            return {...x, isSelected: newChecked}
+        }))
+        setChecked(newChecked)
+    }
+
     return (
-        <AccordionItem value={title}>
-            <AccordionTrigger>{title}</AccordionTrigger>
+        <AccordionItem 
+            value={title} 
+        >
+            <AccordionTrigger>
+                <div className="flex flex-1 flex-row justify-between items-center flex-wrap gap-y-5">
+                    {title}
+                    <div className="flex items-center space-x-2 pr-5">
+                        <Switch
+                            id="check"
+                            checked={checked}
+                            onCheckedChange={onCheckedChange}
+                            onClick={(event) => event.stopPropagation()}
+                        />
+                        <Label htmlFor="check">{checked? "Remover todos": "Selecionar todos"}</Label>
+                    </div>
+                </div>
+            </AccordionTrigger>
             <AccordionContent className="flex flex-row gap-x-3 gap-y-3 flex-wrap">
                 {
                     data.map((x, idx) =>
