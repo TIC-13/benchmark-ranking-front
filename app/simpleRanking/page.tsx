@@ -4,7 +4,7 @@ import React, { useState } from "react"
 
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { TypographyH3 } from "@/components/typography/Typography";
+import { TypographyH2 } from "@/components/typography/Typography";
 import useSimpleRanking from "./hooks/useSimpleRanking";
 import MainContainer from "@/components/custom/MainContainer";
 import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
@@ -17,6 +17,14 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 import useQuantizations from "./hooks/useQuantizations";
 
 type Selectable = {
@@ -68,34 +76,43 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     return (
         <MainContainer>
-            <TypographyH3 text="Ranking de aparelhos" />
-            <Accordion type="multiple" className="max-w-l">
-                <SelectionAccordionItem
-                    data={models}
-                    setData={setModels}
-                    title="Selecionar modelos"
-                />
-                <SelectionAccordionItem
-                    data={quantizations}
-                    setData={setQuantizations}
-                    title="Selecionar quantizações"
-                />
-            </Accordion>
-            <div className="flex flex-row gap-x-5">
-                <Button
-                    onClick={onRefetch}
-                    className="max-w-xs"
-                    variant="default"
-                >
-                    Aplicar filtros
-                </Button>
-                {
-                    refreshPending &&
-                    <Badge variant="destructive">
-                        Mudanças não salvas
-                    </Badge>
-                }
-            </div>
+            <TypographyH2 text="Ranking de aparelhos" />
+            <Card>
+                <CardHeader>
+                    <CardTitle>Meus filtros</CardTitle>
+                    <CardDescription>Selecione modelos e quantizações que serão usados para calcular os resultados</CardDescription>
+                </CardHeader>
+                <CardContent className = "flex flex-col gap-y-5">
+                    <Accordion type="multiple" className="max-w-l">
+                        <SelectionAccordionItem
+                            data={models}
+                            setData={setModels}
+                            title="Modelos"
+                        />
+                        <SelectionAccordionItem
+                            data={quantizations}
+                            setData={setQuantizations}
+                            title="Quantizações"
+                        />
+                    </Accordion>
+                    <div className="flex flex-row gap-x-5">
+                        <Button
+                            onClick={onRefetch}
+                            className="max-w-xs"
+                            variant="default"
+                        >
+                            Aplicar filtros
+                        </Button>
+                        {
+                            refreshPending &&
+                            <Badge variant="destructive">
+                                Mudanças não salvas
+                            </Badge>
+                        }
+                    </div>
+                </CardContent>
+            </Card>
+
             <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} />
         </MainContainer>
     )
