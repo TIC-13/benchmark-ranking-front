@@ -88,7 +88,39 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 subtitle="Selecione modelos e quantizações que serão usados para calcular os resultados"
                 contentClassName="flex flex-col gap-y-5"
             >
-                <Filters />
+                <Accordion type="multiple" className="max-w-l">
+                    <DefaultAccordionItem
+                        value="modelos"
+                        triggerLabel="Modelos"
+                    >
+                        {
+                            CATEGORIES.map(category =>
+                                <AccordionItemWithSwitch
+                                    data={models}
+                                    setData={setModels}
+                                    title={category.label}
+                                    getItemName={(item) => item.value.ml_model}
+                                    showItem={(item) => item.value.category === category.value}
+                                />
+                            )
+                        }
+                        <AccordionItemWithSwitch
+                            data={models}
+                            setData={setModels}
+                            title="Outros"
+                            getItemName={(item) => item.value.ml_model}
+                            showItem={(item) => !CATEGORIES.map(x => x.value)
+                                .includes(item.value.category)
+                            }
+                        />
+                    </DefaultAccordionItem>
+                    <AccordionItemWithSwitch
+                        data={quantizations}
+                        setData={setQuantizations}
+                        title="Quantizações"
+                        getItemName={(item) => item.value}
+                    />
+                </Accordion>
                 <ApplyFilterButton />
             </DefaultCard>
             {
@@ -98,56 +130,6 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} />
         </MainContainer>
     )
-
-    function Filters() {
-        return (
-            <Accordion type="multiple" className="max-w-l">
-                <ModelsFilter />
-                <QuantizationFilters />
-            </Accordion>
-        )
-    }
-
-    function ModelsFilter() {
-        return (
-            <DefaultAccordionItem
-                value="modelos"
-                triggerLabel="Modelos"
-            >
-                {
-                    CATEGORIES.map(category =>
-                        <AccordionItemWithSwitch
-                            data={models}
-                            setData={setModels}
-                            title={category.label}
-                            getItemName={(item) => item.value.ml_model}
-                            showItem={(item) => item.value.category === category.value}
-                        />
-                    )
-                }
-                <AccordionItemWithSwitch
-                    data={models}
-                    setData={setModels}
-                    title="Outros"
-                    getItemName={(item) => item.value.ml_model}
-                    showItem={(item) => !CATEGORIES.map(x => x.value)
-                        .includes(item.value.category)
-                    }
-                />
-            </DefaultAccordionItem>
-        )
-    }
-
-    function QuantizationFilters() {
-        return (
-            <AccordionItemWithSwitch
-                data={quantizations}
-                setData={setQuantizations}
-                title="Quantizações"
-                getItemName={(item) => item.value}
-            />
-        )
-    }
 
     function ApplyFilterButton() {
         return (
