@@ -3,7 +3,8 @@ import axios from "axios";
 
 export type Model = {
     ml_model: string,
-    category: string
+    category: string,
+    quantizations: string[]
 }
 
 const useModels = () => 

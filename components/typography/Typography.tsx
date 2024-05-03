@@ -26,3 +26,7 @@ export function TypographyH3({ text }: TypographyProps) {
         </h3>
     )
 }
+
+export function TypographyLarge({ text }: TypographyProps) {
+    return <div className="text-lg font-semibold">{text}</div>
+  }

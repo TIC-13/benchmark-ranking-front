@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { ReactNode, useEffect, useRef, useState } from "react"
 
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
@@ -28,6 +28,10 @@ import {
 import { Switch } from "@/components/ui/switch"
 import useQuantizations from "./hooks/useQuantizations";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import SingleAccordionInCard from "@/components/custom/AccordionInCard";
+import AccordionInCard from "@/components/custom/AccordionInCard";
+import DefaultCard from "@/components/custom/DefaultCard";
 
 interface Selectable<T> {
     value: T,
@@ -79,6 +83,8 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     const [modelsToFetch, setModelsToFetch] = useState(modelsList)
     const [quantizationsToFetch, setQuantizationsToFetch] = useState(quantizationsList)
 
+    const [invalidModelsQuantizations, setInvalidModelsQuantizations] = useState(getInvalidModelsQuantizations())
+
     const refreshPending =
         !arraysOfSelectableEquals(models, modelsToFetch) ||
         !arraysOfSelectableEquals(quantizations, quantizationsToFetch)
@@ -88,65 +94,104 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
         setQuantizationsToFetch(quantizations)
     }
 
+    useEffect(() => {
+        setInvalidModelsQuantizations(getInvalidModelsQuantizations())
+    }, [modelsToFetch, quantizationsToFetch])
+
+    function getInvalidModelsQuantizations() {
+
+        const byQuant = quantizationsToFetch
+            .filter(quant => quant.isSelected)
+            .map(quant => {
+                return {
+                    quantization: quant.value,
+                    models: modelsToFetch.filter(model =>
+                        model.isSelected && !model.value.quantizations.includes(quant.value)
+                    ).map(model => model.value)
+                }
+            })
+        return byQuant
+    }
+
     return (
         <MainContainer>
             <TypographyH2 text="Ranking de aparelhos" />
-            <Card>
-                <CardHeader>
-                    <CardTitle>Meus filtros</CardTitle>
-                    <CardDescription>Selecione modelos e quantizações que serão usados para calcular os resultados</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-y-5">
-                    <Accordion type="multiple" className="max-w-l">
-                        <AccordionItem value="Modelos">
-                            <AccordionTrigger>Modelos</AccordionTrigger>
-                            <AccordionContent className="pl-5">
+            <DefaultCard
+                title="Meus filtros"
+                subtitle="Selecione modelos e quantizações que serão usados para calcular os resultados"
+                contentClassName="flex flex-col gap-y-5"
+            >
+                <Accordion type="multiple" className="max-w-l">
+                    <AccordionItem value="Modelos">
+                        <AccordionTrigger>Modelos</AccordionTrigger>
+                        <AccordionContent className="pl-5">
+                            {
+                                CATEGORIES.map(category =>
+                                    <SelectionAccordionItem
+                                        data={models}
+                                        setData={setModels}
+                                        title={category.label}
+                                        getItemName={(item) => item.value.ml_model}
+                                        showItem={(item) => item.value.category === category.value}
+                                    />
+                                )
+                            }
+                            <SelectionAccordionItem
+                                data={models}
+                                setData={setModels}
+                                title="Outros"
+                                getItemName={(item) => item.value.ml_model}
+                                showItem={(item) => !CATEGORIES.map(x => x.value)
+                                    .includes(item.value.category)
+                                }
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                    <SelectionAccordionItem
+                        data={quantizations}
+                        setData={setQuantizations}
+                        title="Quantizações"
+                        getItemName={(item) => item.value}
+                    />
+                </Accordion>
+                <div className="flex flex-row gap-x-5">
+                    <Button
+                        onClick={onRefetch}
+                        className="max-w-xs"
+                        variant="default"
+                    >
+                        Aplicar filtros
+                    </Button>
+                    {
+                        refreshPending &&
+                        <Badge variant="destructive">
+                            Mudanças não salvas
+                        </Badge>
+                    }
+                </div>
+            </DefaultCard>
+            {
+                invalidModelsQuantizations.length > 0 &&
+                <AccordionInCard contentClassName="flex flex-col gap-y-2">
+                    {
+                        invalidModelsQuantizations.map(quant =>
+                            <DefaultCard
+                                title={quant.quantization}
+                                subtitle="Modelos não suportados"
+                                className="flex flex-row items-center bg-secondary"
+                                titleClassName="text-lg"
+                                contentClassName="flex flex-wrap p-0 justify-center gap-x-2 gap-y-2"
+                            >
                                 {
-                                    CATEGORIES.map(category =>
-                                        <SelectionAccordionItem
-                                            data={models}
-                                            setData={setModels}
-                                            title={category.label}
-                                            getItemName={(item) => item.value.ml_model}
-                                            showItem={(item) => item.value.category === category.value}
-                                        />
+                                    quant.models.map(model =>
+                                        <Badge>{model.ml_model}</Badge>
                                     )
                                 }
-                                <SelectionAccordionItem
-                                    data={models}
-                                    setData={setModels}
-                                    title="Outros"
-                                    getItemName={(item) => item.value.ml_model}
-                                    showItem={(item) => !CATEGORIES.map(x => x.value)
-                                        .includes(item.value.category)
-                                    }
-                                />
-                            </AccordionContent>
-                        </AccordionItem>
-                        <SelectionAccordionItem
-                            data={quantizations}
-                            setData={setQuantizations}
-                            title="Quantizações"
-                            getItemName={(item) => item.value}
-                        />
-                    </Accordion>
-                    <div className="flex flex-row gap-x-5">
-                        <Button
-                            onClick={onRefetch}
-                            className="max-w-xs"
-                            variant="default"
-                        >
-                            Aplicar filtros
-                        </Button>
-                        {
-                            refreshPending &&
-                            <Badge variant="destructive">
-                                Mudanças não salvas
-                            </Badge>
-                        }
-                    </div>
-                </CardContent>
-            </Card>
+                            </DefaultCard>
+                        )
+                    }
+                </AccordionInCard>
+            }
             <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} />
         </MainContainer>
     )
@@ -189,16 +234,16 @@ function SelectionAccordionItem<T>({ data, setData, title, getItemName, showItem
 
     function onCheckedChange(newChecked: boolean) {
         setData(data.map(x => {
-            return { ...x, isSelected: showItem(x)? newChecked: x.isSelected }
+            return { ...x, isSelected: showItem(x) ? newChecked : x.isSelected }
         }))
         setChecked(newChecked)
     }
 
     useEffect(() => {
         const showedItems = data.filter(x => showItem(x))
-        if(showedItems.every(x => x.isSelected))
+        if (showedItems.every(x => x.isSelected))
             setChecked(true)
-        if(showedItems.every(x => !x.isSelected))
+        if (showedItems.every(x => !x.isSelected))
             setChecked(false)
     }, [data])
 
