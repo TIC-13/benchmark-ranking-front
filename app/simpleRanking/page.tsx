@@ -19,6 +19,7 @@ import AccordionInCard from "@/components/custom/AccordionInCard";
 import DefaultCard from "@/components/custom/DefaultCard";
 import AccordionItemWithSwitch, { Selectable } from "@/components/custom/AccordionItemWithSwitch";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
+import { DarkModeToggle } from "@/components/custom/DarkModeToggle";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -82,6 +83,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     return (
         <MainContainer>
+            <DarkModeToggle/>
             <TypographyH2 text="Ranking de aparelhos" />
             <DefaultCard
                 title="Meus filtros"
