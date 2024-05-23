@@ -83,8 +83,10 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     return (
         <MainContainer>
-            <DarkModeToggle/>
-            <TypographyH2 text="Ranking de aparelhos" />
+            <div className="flex flex-1 justify-between">
+                <TypographyH2 text="Ranking de aparelhos" />
+                <DarkModeToggle />
+            </div>
             <DefaultCard
                 title="Meus filtros"
                 subtitle="Selecione modelos e quantizações que serão usados para calcular os resultados"
