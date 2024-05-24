@@ -7,12 +7,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+    Card
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 

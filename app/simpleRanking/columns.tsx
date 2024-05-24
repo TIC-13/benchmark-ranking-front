@@ -6,9 +6,14 @@ import { Button } from "@/components/ui/button"
 
 export type Inference = {
     phone: Phone,
-    CPU: number | null,
-    GPU: number | null,
-    NNAPI: number | null
+    CPU: Result | null,
+    GPU: Result | null,
+    NNAPI: Result | null
+}
+
+type Result = {
+    speed?: number,
+    samples?: number
 }
 
 export type Phone = {
@@ -17,12 +22,29 @@ export type Phone = {
     phone_model: string
 }
 
+const sortingFn = (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
+    const minSpeed = -99999
+
+    const getRowValue = (row: Row<Inference>) => {
+        const value = row.getValue<Result | null>(columnId)
+        return value ? value.speed ?? minSpeed: minSpeed
+    }
+
+    const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
+
+    if (rowAValue === rowBValue) return 0;
+    return rowAValue < rowBValue ? 1 : -1;
+}
+
 export const columns: ColumnDef<Inference>[] = [
     {
         accessorKey: "phone",
         header: "Smartphone",
+        
         cell: ({ row }: { row: Row<Inference> }) =>
-            (row.getValue("phone") as Phone).phone_model
+            (row.getValue("phone") as Phone).phone_model,
+
+        enableSorting: true
     },
     getColumnDef("CPU"),
     getColumnDef("GPU"),
@@ -33,19 +55,38 @@ function getColumnDef(rowName: string): ColumnDef<Inference> {
     return {
         accessorKey: rowName,
         header: getHeader(rowName),
-        cell: getRowValue(rowName)
+        cell: getRowValue(rowName),
+        sortingFn: sortingFn,
+        enableSorting: true,
     }
 }
 
 function getRowValue(pickedRow: string) {
     return ({ row }: { row: Row<Inference> }) => {
-        const value = row.getValue(pickedRow)
+        
+        const value = row.getValue(pickedRow) as Result | null
+        const speed = value?.speed ? `${value.speed} ms`: "-"
+        const numSamples = value?.samples? `${value?.samples} amostra${value?.samples === 1? "": "s"}`: null
+
         return (
             <Button
                 variant="ghost"
-                className="italic"
+                className="italic w-28"
             >
-                {value ? value + " ms" : "-"}
+                {
+                    value !== null?
+
+                    <div className="flex flex-col gap-y-1 w-100">
+                        <p className={`text-${numSamples !== null? "base": "base"}`}>{speed}</p>
+                        {
+                            numSamples &&
+                            <p className="text-xs">{numSamples}</p>
+                        }
+                        
+                    </div>
+                    
+                    : "-"
+                }
             </Button>
         )
     }
@@ -58,17 +99,6 @@ function getHeader(label: string) {
         const isSelected = sortStatus !== false
         const iconClass = "ml-2 h-4 w-4"
 
-        const colors =
-            isSelected ?
-                {
-                    background: "secordary",
-                    foreground: "secondary-foreground"
-                } :
-                {
-                    background: "undefined",
-                    foreground: "undefined"
-                }
-
         return (
             <Button
                 variant={isSelected ? "default" : "ghost"}
@@ -78,7 +108,7 @@ function getHeader(label: string) {
                 {label}
                 {
                     sortStatus !== false ?
-                        sortStatus === "desc" ?
+                        sortStatus === "asc" ?
                             <ArrowDown className={iconClass} /> :
                             <ArrowUp className={iconClass} /> :
                         <ArrowUpDown className={iconClass} />

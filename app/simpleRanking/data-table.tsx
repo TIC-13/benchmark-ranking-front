@@ -7,7 +7,6 @@ import {
   SortingState,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
@@ -21,7 +20,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -33,7 +31,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "CPU", desc: false }
+    { id: "CPU", desc: true }
   ]);
 
   const table = useReactTable({

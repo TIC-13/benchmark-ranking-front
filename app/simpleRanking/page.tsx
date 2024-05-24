@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 
 import { DataTable } from "./data-table";
-import { columns } from "./columns";
+import { Inference, columns } from "./columns";
 import { TypographyH2 } from "@/components/typography/Typography";
 import useSimpleRanking from "./hooks/useSimpleRanking";
 import MainContainer from "@/components/custom/MainContainer";
@@ -20,6 +20,7 @@ import DefaultCard from "@/components/custom/DefaultCard";
 import AccordionItemWithSwitch, { Selectable } from "@/components/custom/AccordionItemWithSwitch";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { DarkModeToggle } from "@/components/custom/DarkModeToggle";
+import { Switch } from "@/components/ui/switch";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -67,6 +68,8 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     const [quantizationsToFetch, setQuantizationsToFetch] = useState(quantizationsList)
 
     const [invalidModelsQuantizations, setInvalidModelsQuantizations] = useState(getInvalidModelsQuantizations())
+
+    const [showSamples, setShowSamples] = useState(false)
 
     const refreshPending =
         !arraysOfSelectableEquals(models, modelsToFetch) ||
@@ -125,13 +128,20 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                         getItemName={(item) => item.value}
                     />
                 </Accordion>
+                <div className = "flex flex-row gap-x-5">
+                    <p>Mostrar número de amostras</p>
+                    <Switch 
+                        checked={showSamples}
+                        onCheckedChange={setShowSamples}
+                    />
+                </div>
                 <ApplyFilterButton />
             </DefaultCard>
             {
                 invalidModelsQuantizations.length > 0 &&
                 <InvalidModelsAlert />
             }
-            <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} />
+            <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} showSamples={showSamples}/>
         </MainContainer>
     )
 
@@ -202,10 +212,11 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
 type RankingLayerProps = {
     models: Selectable<Model>[],
-    quantizations: Selectable<string>[]
+    quantizations: Selectable<string>[],
+    showSamples?: boolean
 }
 
-function Ranking({ models, quantizations }: RankingLayerProps) {
+function Ranking({ models, quantizations, showSamples = true }: RankingLayerProps) {
 
     const rankingQuery = useSimpleRanking(
         models.filter(x => x.isSelected)
@@ -217,8 +228,29 @@ function Ranking({ models, quantizations }: RankingLayerProps) {
     if (rankingQuery.isLoading || rankingQuery.data === undefined)
         return <LoadingFullScreen />
 
+    const setNumSamplesNull = (inferences: Inference[]): Inference[] => {
+        return inferences.map(
+            inferences => {
+                return {
+                    phone: {...inferences.phone},
+                    CPU: {...inferences.CPU, samples: undefined},
+                    GPU: {...inferences.GPU, samples: undefined},
+                    NNAPI: {...inferences.NNAPI, samples: undefined}
+                }
+            }
+        )
+    }
+
     return (
-        <DataTable columns={columns} data={rankingQuery.data} />
+        <DataTable 
+            columns={columns} 
+            data={
+                showSamples? 
+                    rankingQuery.data :
+                    setNumSamplesNull(rankingQuery.data)
+            }
+
+        />
     )
 
 }
