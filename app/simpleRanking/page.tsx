@@ -21,6 +21,8 @@ import AccordionItemWithSwitch, { Selectable } from "@/components/custom/Accordi
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { DarkModeToggle } from "@/components/custom/DarkModeToggle";
 import { Switch } from "@/components/ui/switch";
+import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
+import { Separator } from "@/components/custom/Separator";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -70,6 +72,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     const [invalidModelsQuantizations, setInvalidModelsQuantizations] = useState(getInvalidModelsQuantizations())
 
     const [showSamples, setShowSamples] = useState(false)
+    const [showPowerAndEnergy, setShowPowerAndEnergy] = useState(false)
 
     const refreshPending =
         !arraysOfSelectableEquals(models, modelsToFetch) ||
@@ -128,20 +131,24 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                         getItemName={(item) => item.value}
                     />
                 </Accordion>
-                <div className = "flex flex-row gap-x-5">
-                    <p>Mostrar número de amostras</p>
-                    <Switch 
-                        checked={showSamples}
-                        onCheckedChange={setShowSamples}
-                    />
-                </div>
+                <SwitchWithLabel
+                    label="Mostrar número de inferências"
+                    checked={showSamples}
+                    onCheckedChange={setShowSamples}
+                />
+                <Separator/>
+                <SwitchWithLabel
+                    label="Mostrar potência e energia consumida"
+                    checked={showPowerAndEnergy}
+                    onCheckedChange={setShowPowerAndEnergy}
+                />
                 <ApplyFilterButton />
             </DefaultCard>
             {
                 invalidModelsQuantizations.length > 0 &&
                 <InvalidModelsAlert />
             }
-            <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} showSamples={showSamples}/>
+            <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} showSamples={showSamples} showPowerAndEnergy={showPowerAndEnergy} />
         </MainContainer>
     )
 
@@ -213,10 +220,11 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 type RankingLayerProps = {
     models: Selectable<Model>[],
     quantizations: Selectable<string>[],
-    showSamples?: boolean
+    showSamples?: boolean,
+    showPowerAndEnergy?: boolean
 }
 
-function Ranking({ models, quantizations, showSamples = true }: RankingLayerProps) {
+function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy = true }: RankingLayerProps) {
 
     const rankingQuery = useSimpleRanking(
         models.filter(x => x.isSelected)
@@ -228,28 +236,21 @@ function Ranking({ models, quantizations, showSamples = true }: RankingLayerProp
     if (rankingQuery.isLoading || rankingQuery.data === undefined)
         return <LoadingFullScreen />
 
-    const setNumSamplesNull = (inferences: Inference[]): Inference[] => {
-        return inferences.map(
-            inferences => {
-                return {
-                    phone: {...inferences.phone},
-                    CPU: {...inferences.CPU, samples: undefined},
-                    GPU: {...inferences.GPU, samples: undefined},
-                    NNAPI: {...inferences.NNAPI, samples: undefined}
-                }
-            }
-        )
-    }
+    let data = rankingQuery.data.map(inference =>
+    ({
+        ...inference,
+        CPU: { ...inference.CPU, showSamples, showPowerAndEnergy },
+        GPU: { ...inference.GPU, showSamples, showPowerAndEnergy },
+        NNAPI: { ...inference.NNAPI, showSamples, showPowerAndEnergy },
+    })
+    )
+
+    console.log("data", data)
 
     return (
-        <DataTable 
-            columns={columns} 
-            data={
-                showSamples? 
-                    rankingQuery.data :
-                    setNumSamplesNull(rankingQuery.data)
-            }
-
+        <DataTable
+            columns={columns}
+            data={data}
         />
     )
 
