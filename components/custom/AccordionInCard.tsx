@@ -13,16 +13,18 @@ import { cn } from "@/lib/utils"
 
 type AlertProps = {
     children: ReactNode
-    className?: string,
-    contentClassName?: string
+    classNameOuterCard?: string,
+    contentClassName?: string,
+    classNameAccordion?: string,
+    labelClassName?: string
 }
 
-export default function AccordionInCard({ children, className, contentClassName }: AlertProps) {
+export default function AccordionInCard({ children, classNameOuterCard, contentClassName, labelClassName, classNameAccordion }: AlertProps) {
     return (
-        <Card className={cn("px-10", className)}>
-            <Accordion type="single" collapsible>
+        <Card className={cn("px-10", classNameOuterCard)}>
+            <Accordion type="single" collapsible className={classNameAccordion}>
                 <AccordionItem value="item-1">
-                    <AccordionTrigger>Alerta</AccordionTrigger>
+                    <AccordionTrigger className={labelClassName}>Alerta</AccordionTrigger>
                     <AccordionContent className={contentClassName}>
                         {children}
                     </AccordionContent>

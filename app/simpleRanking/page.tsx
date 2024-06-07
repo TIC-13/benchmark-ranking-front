@@ -177,7 +177,11 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             <>
                 {
                     invalidModelsQuantizations.length > 0 &&
-                    <AccordionInCard contentClassName="flex flex-col gap-y-2">
+                    <AccordionInCard 
+                        classNameOuterCard="border-warning-foreground"
+                        labelClassName="text-warning-foreground font-bold"
+                        contentClassName="flex flex-col gap-y-2"
+                    >
                         {
                             invalidModelsQuantizations.map(quant =>
                                 <DefaultCard
