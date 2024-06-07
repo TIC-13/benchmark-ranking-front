@@ -4,6 +4,7 @@ import { Column, ColumnDef, Row } from "@tanstack/react-table"
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CloudLightning } from "lucide-react"
+import { formatNumber } from "../src/utils/formatNumber"
 
 export type Inference = {
     phone: Phone,
@@ -77,7 +78,7 @@ function getRowValue(pickedRow: string) {
             !showSamples ?
                 null :
                 value?.samples ?
-                    `${value.samples} inferência${value.samples === 1 ? "" : "s"}` :
+                    `${formatNumber(value.samples)} inferência${value.samples === 1 ? "" : "s"}` :
                     "Inferências não calculadas"
 
         const power =
