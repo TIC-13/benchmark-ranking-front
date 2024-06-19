@@ -3,7 +3,6 @@
 import { Column, ColumnDef, Row } from "@tanstack/react-table"
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { CloudLightning } from "lucide-react"
 import { formatNumber } from "../src/utils/formatNumber"
 
 export type Inference = {
@@ -28,12 +27,16 @@ export type Phone = {
     phone_model: string
 }
 
-const sortingFn = (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
-    const minSpeed = -99999
+type SortingMode = "speed" | "energy"
+
+const getSortingFn = (mode: SortingMode = "speed") => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
+    const maxValue = 99999999
 
     const getRowValue = (row: Row<Inference>) => {
         const value = row.getValue<Result | null>(columnId)
-        return value ? value.speed ?? minSpeed : minSpeed
+        if(mode === "speed")
+            return value ? value.speed ?? maxValue : maxValue
+        return value ? value.energy ?? maxValue: maxValue
     }
 
     const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
@@ -42,27 +45,28 @@ const sortingFn = (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string)
     return rowAValue < rowBValue ? 1 : -1;
 }
 
-export const columns: ColumnDef<Inference>[] = [
-    {
-        accessorKey: "phone",
-        header: "Smartphone",
+export const getColumns = (mode: SortingMode = "speed"): ColumnDef<Inference>[] => 
+    [
+        {
+            accessorKey: "phone",
+            header: "Smartphone",
+    
+            cell: ({ row }: { row: Row<Inference> }) =>
+                (row.getValue("phone") as Phone).phone_model,
+    
+            enableSorting: true
+        },
+        getColumnDef("CPU", mode),
+        getColumnDef("GPU", mode),
+        getColumnDef("NNAPI", mode)
+    ]
 
-        cell: ({ row }: { row: Row<Inference> }) =>
-            (row.getValue("phone") as Phone).phone_model,
-
-        enableSorting: true
-    },
-    getColumnDef("CPU"),
-    getColumnDef("GPU"),
-    getColumnDef("NNAPI")
-]
-
-function getColumnDef(rowName: string): ColumnDef<Inference> {
+function getColumnDef(rowName: string, mode: SortingMode = "speed"): ColumnDef<Inference> {
     return {
         accessorKey: rowName,
         header: getHeader(rowName),
         cell: getRowValue(rowName),
-        sortingFn: sortingFn,
+        sortingFn: getSortingFn(mode),
         enableSorting: true,
     }
 }
@@ -85,14 +89,14 @@ function getRowValue(pickedRow: string) {
             !showPowerAndEnergy ?
                 null :
                 (value?.power && value.energy) ?
-                    `⚡${value.power.toFixed(2)}W e ${value.energy?.toFixed(2)}J` :
-                    "Energia não calculada"
+                    `⚡${value.power.toFixed(2)}W | ${value.energy?.toFixed(2)}J` :
+                    "Consumo não calculado"
 
         return (
             <div className="flex flex-1 justify-center">
                 <Button
                     variant="ghost"
-                    className="italic w-25"
+                    className="italic min-w-52"
                 >
                     {
                         value !== null ?

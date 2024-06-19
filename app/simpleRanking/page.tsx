@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 
 import { DataTable } from "./data-table";
-import { Inference, columns } from "./columns";
+import { getColumns } from "./columns";
 import { TypographyH2 } from "@/components/typography/Typography";
 import useSimpleRanking from "./hooks/useSimpleRanking";
 import MainContainer from "@/components/custom/MainContainer";
@@ -74,6 +74,8 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     const [showSamples, setShowSamples] = useState(false)
     const [showPowerAndEnergy, setShowPowerAndEnergy] = useState(false)
 
+    const [orderByEnergy, setOrderByEnergy] = useState(false)
+
     const refreshPending =
         !arraysOfSelectableEquals(models, modelsToFetch) ||
         !arraysOfSelectableEquals(quantizations, quantizationsToFetch)
@@ -136,19 +138,35 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
-                <Separator/>
-                <SwitchWithLabel
-                    label="Mostrar potência e energia consumida"
-                    checked={showPowerAndEnergy}
-                    onCheckedChange={setShowPowerAndEnergy}
-                />
+                <Separator />
+                <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
+                    <SwitchWithLabel
+                        label="Mostrar potência e energia consumida"
+                        checked={showPowerAndEnergy}
+                        onCheckedChange={setShowPowerAndEnergy}
+                    />
+                    {
+                        showPowerAndEnergy &&
+                        <SwitchWithLabel
+                            label="Ordenar por energia consumida"
+                            checked={orderByEnergy}
+                            onCheckedChange={setOrderByEnergy}
+                        />
+                    }
+                </div>
                 <ApplyFilterButton />
             </DefaultCard>
             {
                 invalidModelsQuantizations.length > 0 &&
                 <InvalidModelsAlert />
             }
-            <Ranking models={modelsToFetch} quantizations={quantizationsToFetch} showSamples={showSamples} showPowerAndEnergy={showPowerAndEnergy} />
+            <Ranking 
+                models={modelsToFetch} 
+                quantizations={quantizationsToFetch} 
+                showSamples={showSamples} 
+                showPowerAndEnergy={showPowerAndEnergy}
+                orderByEnergy={showPowerAndEnergy && orderByEnergy}
+            />
         </MainContainer>
     )
 
@@ -177,7 +195,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             <>
                 {
                     invalidModelsQuantizations.length > 0 &&
-                    <AccordionInCard 
+                    <AccordionInCard
                         classNameOuterCard="border-warning-foreground"
                         labelClassName="text-warning-foreground font-bold"
                         contentClassName="flex flex-col gap-y-2"
@@ -225,10 +243,11 @@ type RankingLayerProps = {
     models: Selectable<Model>[],
     quantizations: Selectable<string>[],
     showSamples?: boolean,
-    showPowerAndEnergy?: boolean
+    showPowerAndEnergy?: boolean,
+    orderByEnergy?: boolean
 }
 
-function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy = true }: RankingLayerProps) {
+function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy = true, orderByEnergy = false }: RankingLayerProps) {
 
     const rankingQuery = useSimpleRanking(
         models.filter(x => x.isSelected)
@@ -249,15 +268,12 @@ function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy
     })
     )
 
-    console.log("data", data)
-
     return (
         <DataTable
-            columns={columns}
+            columns={getColumns(orderByEnergy ? "energy": "speed")}
             data={data}
         />
     )
-
 }
 
 function arraysOfSelectableEquals(a: Selectable<any>[], b: Selectable<any>[]) {
