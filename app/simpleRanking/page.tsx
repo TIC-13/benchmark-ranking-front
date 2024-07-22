@@ -19,8 +19,6 @@ import AccordionInCard from "@/components/custom/AccordionInCard";
 import DefaultCard from "@/components/custom/DefaultCard";
 import AccordionItemWithSwitch, { Selectable } from "@/components/custom/AccordionItemWithSwitch";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
-import { DarkModeToggle } from "@/components/custom/DarkModeToggle";
-import { Switch } from "@/components/ui/switch";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import { Separator } from "@/components/custom/Separator";
 
@@ -92,8 +90,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     return (
         <MainContainer>
             <div className="flex flex-1 justify-between">
-                <TypographyH2 text="Ranking de aparelhos" />
-                <DarkModeToggle />
+                <TypographyH2 text="Ranking de modelos de visão" />
             </div>
             <DefaultCard
                 title="Meus filtros"

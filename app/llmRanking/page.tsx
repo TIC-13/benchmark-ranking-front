@@ -8,7 +8,6 @@ import { TypographyH2 } from "@/components/typography/Typography";
 import MainContainer from "@/components/custom/MainContainer";
 import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
 import DefaultCard from "@/components/custom/DefaultCard";
-import { DarkModeToggle } from "@/components/custom/DarkModeToggle";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import { Separator } from "@/components/custom/Separator";
 import useLLMRanking from "./hooks/useLLMRanking";
@@ -34,7 +33,6 @@ function PageLayer() {
         <MainContainer>
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text="Ranking de LLMs" />
-                <DarkModeToggle />
             </div>
             <DefaultCard
                 title="Meus filtros"
