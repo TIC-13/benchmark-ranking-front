@@ -29,7 +29,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <body className={inter.className}>
-              <div className="w-full h-full">
+              <div className="w-screen h-screen">
                 <NavBar/>
                 {children}
               </div>

@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 
 import { DataTable } from "./data-table";
-import { getColumns } from "./columns";
+import { DisplayMode, getColumns, isDisplayMode } from "./columns";
 import { TypographyH2 } from "@/components/typography/Typography";
 import MainContainer from "@/components/custom/MainContainer";
 import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
@@ -25,7 +25,7 @@ function PageLayer() {
     const [showSamples, setShowSamples] = useState(false)
     const [showPowerAndEnergy, setShowPowerAndEnergy] = useState(false)
 
-    const [mode, setMode] = useState<"prefill" | "decode">("decode")
+    const [mode, setMode] = useState<DisplayMode>("total")
 
     const [orderByEnergy, setOrderByEnergy] = useState(false)
 
@@ -44,14 +44,14 @@ function PageLayer() {
                         outerLabel={capitalize(mode ?? "")}
                         innerLabel="Modos"
                         value={mode}
-                        setValue={(value: string) => (value == "prefill" || value == "decode") && setMode(value)}
+                        setValue={(value: string) => isDisplayMode(value) && setMode(value)}
                         options={[
+                            { value: "total", label: "Total" }, 
                             { value: "prefill", label: "Prefill" }, 
                             { value: "decode", label: "Decode" }
                         ]}
                     />
                 </div>
-
                 <SwitchWithLabel
                     label="Mostrar número de conversas"
                     checked={showSamples}

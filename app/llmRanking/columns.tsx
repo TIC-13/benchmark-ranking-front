@@ -26,7 +26,12 @@ export type Phone = {
     phone_model: string
 }
 
-type DisplayMode = "prefill" | "decode"
+export type DisplayMode = "prefill" | "decode" | "total"
+
+export function isDisplayMode(mode: string): mode is DisplayMode {
+    return mode === "prefill" || mode === "decode" || mode === "total";
+}
+
 type SortingMode = DisplayMode| "energy"
 
 const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
@@ -80,7 +85,18 @@ function getRowValue(pickedRow: string, mode: DisplayMode) {
 
         const value = row.getValue(pickedRow) as LLMResult | null
         const { showSamples, showPowerAndEnergy } = value ?? { showSamples: true, showPowerAndEnergy: true }
-        const toksRaw = mode === "decode"? value?.decode: value?.prefill
+        
+        const invalidErrorMode = () => { throw Error("Invalid mode") }
+        
+        const toksRaw = 
+            mode === "decode"? 
+                value?.decode: 
+            mode === "prefill"?
+                value?.prefill:
+            mode === "total"?
+                (value?.prefill ?? 0) + (value?.decode ?? 0):
+                invalidErrorMode()
+
         const toks = toksRaw ? `${toksRaw.toFixed(2)} tok/s` : "-"
 
         const numSamples =
