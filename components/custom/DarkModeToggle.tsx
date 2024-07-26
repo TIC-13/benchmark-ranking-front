@@ -11,9 +11,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useDictionary } from "../providers/DictionaryProvider"
 
 export function DarkModeToggle({className}: {className?: string}) {
+  
   const { setTheme } = useTheme()
+  const { darkModeToggle } = useDictionary()
+  const { system, light, dark } = darkModeToggle
 
   return (
     <DropdownMenu>
@@ -26,13 +30,13 @@ export function DarkModeToggle({className}: {className?: string}) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          Claro
+          {light}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Escuro
+          {dark}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          Sistema
+          {system}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -5,6 +5,11 @@
             "llmRanking": "LLM Ranking"
         }
     },
+    "darkModeToggle": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+    },
     "visionRanking": {
         "title": "Vision Model Ranking",
         "filters": {

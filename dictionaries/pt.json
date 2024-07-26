@@ -5,6 +5,11 @@
             "llmRanking": "Ranking de LLMs"
         }
     },
+    "darkModeToggle": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Escuro"
+    },
     "visionRanking": {
         "title": "Ranking de modelos de visão",
         "filters": {
