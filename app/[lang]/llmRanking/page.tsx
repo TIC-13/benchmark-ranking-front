@@ -13,6 +13,7 @@ import { Separator } from "@/components/custom/Separator";
 import useLLMRanking from "./hooks/useLLMRanking";
 import { DropdownMenuRadio } from "@/components/custom/DropdownRadio";
 import capitalize from "@/utils/capitalize";
+import { useDictionary } from "@/components/providers/DictionaryProvider";
 
 export default function DataQueryLayer() {
     return (
@@ -21,6 +22,8 @@ export default function DataQueryLayer() {
 }
 
 function PageLayer() {
+
+    const { llmRanking: dict } = useDictionary()
 
     const [showSamples, setShowSamples] = useState(false)
     const [showPowerAndEnergy, setShowPowerAndEnergy] = useState(false)
@@ -32,10 +35,10 @@ function PageLayer() {
     return (
         <MainContainer>
             <div className="flex flex-1 justify-between">
-                <TypographyH2 text="Ranking de LLMs" />
+                <TypographyH2 text={dict.title} />
             </div>
             <DefaultCard
-                title="Meus filtros"
+                title={dict.filters.title}
                 subtitle=""
                 contentClassName="flex flex-col gap-y-5"
             >
@@ -46,28 +49,28 @@ function PageLayer() {
                         value={mode}
                         setValue={(value: string) => isDisplayMode(value) && setMode(value)}
                         options={[
-                            { value: "total", label: "Total" }, 
-                            { value: "prefill", label: "Prefill" }, 
-                            { value: "decode", label: "Decode" }
+                            { value: "total", label: dict.filters.mode.total }, 
+                            { value: "prefill", label: dict.filters.mode.prefill }, 
+                            { value: "decode", label: dict.filters.mode.decode }
                         ]}
                     />
                 </div>
                 <SwitchWithLabel
-                    label="Mostrar número de conversas"
+                    label={dict.filters.toggles.conversationNumber}
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
                 <Separator />
                 <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
                     <SwitchWithLabel
-                        label="Mostrar potência e energia consumida"
+                        label={dict.filters.toggles.showPowerAndEnergy}
                         checked={showPowerAndEnergy}
                         onCheckedChange={setShowPowerAndEnergy}
                     />
                     {
                         showPowerAndEnergy &&
                         <SwitchWithLabel
-                            label="Ordenar por energia consumida"
+                            label={dict.filters.toggles.orderByPowerAndEnergy}
                             checked={orderByEnergy}
                             onCheckedChange={setOrderByEnergy}
                         />

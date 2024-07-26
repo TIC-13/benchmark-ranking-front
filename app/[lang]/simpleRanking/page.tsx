@@ -21,6 +21,7 @@ import AccordionItemWithSwitch, { Selectable } from "@/components/custom/Accordi
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import { Separator } from "@/components/custom/Separator";
+import { useDictionary } from "@/components/providers/DictionaryProvider";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -52,14 +53,18 @@ type Category = {
     label: string
 }
 
-const CATEGORIES: Category[] = [
-    { value: "CLASSIFICATION", label: "Classificação" },
-    { value: "DETECTION", label: "Detecção" },
-    { value: "SEGMENTATION", label: "Segmentação" },
-    { value: "LANGUAGE", label: "Linguagem" }
-]
-
 function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
+
+
+    const { visionRanking: dict } = useDictionary()
+    const { classification, detection, segmentation, language, other } = dict.filters.models.types
+
+    const CATEGORIES: Category[] = [
+        { value: "CLASSIFICATION", label: classification },
+        { value: "DETECTION", label: detection },
+        { value: "SEGMENTATION", label: segmentation },
+        { value: "LANGUAGE", label: language }
+    ]
 
     const [models, setModels] = useState(modelsList)
     const [quantizations, setQuantizations] = useState(quantizationsList)
@@ -90,21 +95,23 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     return (
         <MainContainer>
             <div className="flex flex-1 justify-between">
-                <TypographyH2 text="Ranking de modelos de visão" />
+                <TypographyH2 text={dict.title} />
             </div>
             <DefaultCard
-                title="Meus filtros"
-                subtitle="Selecione modelos e quantizações que serão usados para calcular os resultados"
+                title={dict.filters.title}
+                subtitle={dict.filters.subtitle}
                 contentClassName="flex flex-col gap-y-5"
             >
                 <Accordion type="multiple" className="max-w-l">
                     <DefaultAccordionItem
                         value="modelos"
-                        triggerLabel="Modelos"
+                        triggerLabel={dict.filters.models.label}
                     >
                         {
                             CATEGORIES.map(category =>
                                 <AccordionItemWithSwitch
+                                    labelOn={dict.filters.toggles.removeAll}
+                                    labelOff={dict.filters.toggles.selectAll}
                                     data={models}
                                     setData={setModels}
                                     title={category.label}
@@ -114,9 +121,11 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                             )
                         }
                         <AccordionItemWithSwitch
+                            labelOn={dict.filters.toggles.removeAll}
+                            labelOff={dict.filters.toggles.selectAll}
                             data={models}
                             setData={setModels}
-                            title="Outros"
+                            title={other}
                             getItemName={(item) => item.value.ml_model}
                             showItem={(item) => !CATEGORIES.map(x => x.value)
                                 .includes(item.value.category)
@@ -126,26 +135,26 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     <AccordionItemWithSwitch
                         data={quantizations}
                         setData={setQuantizations}
-                        title="Quantizações"
+                        title={dict.filters.quantizations}
                         getItemName={(item) => item.value}
                     />
                 </Accordion>
                 <SwitchWithLabel
-                    label="Mostrar número de inferências"
+                    label={dict.filters.toggles.inferenceNumber}
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
                 <Separator />
                 <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
                     <SwitchWithLabel
-                        label="Mostrar potência e energia consumida"
+                        label={dict.filters.toggles.showPowerAndEnergy}
                         checked={showPowerAndEnergy}
                         onCheckedChange={setShowPowerAndEnergy}
                     />
                     {
                         showPowerAndEnergy &&
                         <SwitchWithLabel
-                            label="Ordenar por energia consumida"
+                            label={dict.filters.toggles.orderByPowerAndEnergy}
                             checked={orderByEnergy}
                             onCheckedChange={setOrderByEnergy}
                         />
@@ -157,10 +166,10 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 invalidModelsQuantizations.length > 0 &&
                 <InvalidModelsAlert />
             }
-            <Ranking 
-                models={modelsToFetch} 
-                quantizations={quantizationsToFetch} 
-                showSamples={showSamples} 
+            <Ranking
+                models={modelsToFetch}
+                quantizations={quantizationsToFetch}
+                showSamples={showSamples}
                 showPowerAndEnergy={showPowerAndEnergy}
                 orderByEnergy={showPowerAndEnergy && orderByEnergy}
             />
@@ -175,12 +184,12 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     className="max-w-xs"
                     variant="default"
                 >
-                    Aplicar filtros
+                    {dict.filters.buttons.apply}
                 </Button>
                 {
                     refreshPending &&
                     <Badge variant="destructive">
-                        Mudanças não salvas
+                        {dict.filters.warnings.changesNotSaved}
                     </Badge>
                 }
             </div>
@@ -193,6 +202,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 {
                     invalidModelsQuantizations.length > 0 &&
                     <AccordionInCard
+                        label={dict.alert.label}
                         classNameOuterCard="border-warning-foreground"
                         labelClassName="text-warning-foreground font-bold"
                         contentClassName="flex flex-col gap-y-2"
@@ -201,7 +211,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                             invalidModelsQuantizations.map(quant =>
                                 <DefaultCard
                                     title={quant.quantization}
-                                    subtitle="Modelos não suportados"
+                                    subtitle={dict.alert.notSupported}
                                     className="flex flex-row items-center bg-secondary"
                                     titleClassName="text-lg"
                                     contentClassName="flex flex-wrap p-0 justify-center gap-x-2 gap-y-2"
@@ -267,7 +277,7 @@ function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy
 
     return (
         <DataTable
-            columns={getColumns(orderByEnergy ? "energy": "speed")}
+            columns={getColumns(orderByEnergy ? "energy" : "speed")}
             data={data}
         />
     )

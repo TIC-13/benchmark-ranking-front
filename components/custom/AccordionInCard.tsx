@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils"
 
 type AlertProps = {
+    label: string,
     children: ReactNode
     classNameOuterCard?: string,
     contentClassName?: string,
@@ -19,12 +20,12 @@ type AlertProps = {
     labelClassName?: string
 }
 
-export default function AccordionInCard({ children, classNameOuterCard, contentClassName, labelClassName, classNameAccordion }: AlertProps) {
+export default function AccordionInCard({ label, children, classNameOuterCard, contentClassName, labelClassName, classNameAccordion }: AlertProps) {
     return (
         <Card className={cn("px-10", classNameOuterCard)}>
             <Accordion type="single" collapsible className={classNameAccordion}>
                 <AccordionItem value="item-1">
-                    <AccordionTrigger className={labelClassName}>Alerta</AccordionTrigger>
+                    <AccordionTrigger className={labelClassName}>{label}</AccordionTrigger>
                     <AccordionContent className={contentClassName}>
                         {children}
                     </AccordionContent>

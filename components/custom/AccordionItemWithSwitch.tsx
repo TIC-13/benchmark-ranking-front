@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react"
 import {
-    Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
@@ -16,6 +15,8 @@ export interface Selectable<T> {
 }
 
 interface SelectionProps<T> {
+    labelOn?: string,
+    labelOff?: string,
     data: Selectable<T>[],
     setData: React.Dispatch<React.SetStateAction<Selectable<T>[]>>,
     title: string,
@@ -23,7 +24,7 @@ interface SelectionProps<T> {
     showItem?: (item: Selectable<T>) => boolean,
 }
 
-export default function AccordionItemWithSwitch<T>({ data, setData, title, getItemName, showItem = (item) => true }: SelectionProps<T>) {
+export default function AccordionItemWithSwitch<T>({ labelOn, labelOff, data, setData, title, getItemName, showItem = (item) => true }: SelectionProps<T>) {
 
     const [checked, setChecked] = useState(true)
 
@@ -56,7 +57,7 @@ export default function AccordionItemWithSwitch<T>({ data, setData, title, getIt
                             onCheckedChange={onCheckedChange}
                             onClick={(event) => event.stopPropagation()}
                         />
-                        <Label htmlFor="check">{checked ? "Remover todos" : "Selecionar todos"}</Label>
+                        <Label htmlFor="check">{checked ? labelOn : labelOff}</Label>
                     </div>
                 </div>
             </AccordionTrigger>

@@ -4,20 +4,22 @@ import { Column, ColumnDef, Row } from "@tanstack/react-table"
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { formatNumber } from "../src/utils/formatNumber"
+import { useDictionary } from "@/components/providers/DictionaryProvider"
 
 export type Inference = {
     phone: Phone,
-    result: LLMResult
+    CPU: Result | null,
+    GPU: Result | null,
+    NNAPI: Result | null
 }
 
-type LLMResult = {
-    prefill?: number,
-    decode?: number,
+type Result = {
+    speed?: number,
+    samples?: number,
     power?: number,
     energy?: number,
-    samples?: number,
     showSamples: boolean,
-    showPowerAndEnergy: boolean,
+    showPowerAndEnergy: boolean
 }
 
 export type Phone = {
@@ -26,27 +28,15 @@ export type Phone = {
     phone_model: string
 }
 
-export type DisplayMode = "prefill" | "decode" | "total"
+type SortingMode = "speed" | "energy"
 
-export function isDisplayMode(mode: string): mode is DisplayMode {
-    return mode === "prefill" || mode === "decode" || mode === "total";
-}
-
-type SortingMode = DisplayMode| "energy"
-
-const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
+const getSortingFn = (mode: SortingMode = "speed") => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
     const maxValue = 99999999
-    const maxIfDoesNotExist = (number: number | undefined) => number ? number: maxValue 
 
     const getRowValue = (row: Row<Inference>) => {
-        const value = row.getValue<LLMResult | null>(columnId)
-        console.log(`rowValue col ID ${columnId}`, value)
-        if(mode === "prefill")
-            return maxIfDoesNotExist(value?.prefill)
-        if(mode === "decode")
-            return maxIfDoesNotExist(value?.decode)
-        if(mode === "energy")
-            return maxIfDoesNotExist(value?.energy)
+        const value = row.getValue<Result | null>(columnId)
+        if(mode === "speed")
+            return value ? value.speed ?? maxValue : maxValue
         return value ? value.energy ?? maxValue: maxValue
     }
 
@@ -56,7 +46,7 @@ const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inf
     return rowAValue < rowBValue ? 1 : -1;
 }
 
-export const getColumns = (mode: DisplayMode, sortByEnergy: boolean = false): ColumnDef<Inference>[] => 
+export const getColumns = (mode: SortingMode = "speed"): ColumnDef<Inference>[] => 
     [
         {
             accessorKey: "phone",
@@ -67,51 +57,43 @@ export const getColumns = (mode: DisplayMode, sortByEnergy: boolean = false): Co
     
             enableSorting: true
         },
-        getColumnDef("result", mode, sortByEnergy),
+        getColumnDef("CPU", mode),
+        getColumnDef("GPU", mode),
+        getColumnDef("NNAPI", mode)
     ]
 
-function getColumnDef(rowName: string, mode: DisplayMode, sortByEnergy: boolean): ColumnDef<Inference> {
+function getColumnDef(rowName: string, mode: SortingMode = "speed"): ColumnDef<Inference> {
     return {
         accessorKey: rowName,
-        header: getHeader("Resultados"),
-        cell: getRowValue(rowName, mode),
-        sortingFn: getSortingFn(sortByEnergy ? "energy": mode),
+        header: getHeader(rowName),
+        cell: getRowValue(rowName),
+        sortingFn: getSortingFn(mode),
         enableSorting: true,
     }
 }
 
-function getRowValue(pickedRow: string, mode: DisplayMode) {
+function getRowValue(pickedRow: string) {
     return ({ row }: { row: Row<Inference> }) => {
 
-        const value = row.getValue(pickedRow) as LLMResult | null
-        const { showSamples, showPowerAndEnergy } = value ?? { showSamples: true, showPowerAndEnergy: true }
-        
-        const invalidErrorMode = () => { throw Error("Invalid mode") }
-        
-        const toksRaw = 
-            mode === "decode"? 
-                value?.decode: 
-            mode === "prefill"?
-                value?.prefill:
-            mode === "total"?
-                (value?.prefill ?? 0) + (value?.decode ?? 0):
-                invalidErrorMode()
+        const {visionRanking: dict} = useDictionary()
 
-        const toks = toksRaw ? `${toksRaw.toFixed(2)} tok/s` : "-"
+        const value = row.getValue(pickedRow) as Result | null
+        const { showSamples, showPowerAndEnergy } = value ?? { showSamples: true, showPowerAndEnergy: true }
+        const speed = value?.speed ? `${value.speed} ms` : "-"
 
         const numSamples =
             !showSamples ?
                 null :
                 value?.samples ?
-                    `${formatNumber(value.samples)} conversa${value.samples === 1 ? "" : "s"}` :
-                    "Nº de conversas não calculado"
+                    `${formatNumber(value.samples)} ${value.samples === 1 ? dict.table.inference.singular : dict.table.inference.plural}` :
+                    dict.table.unavailable.inferencesNumber
 
         const power =
             !showPowerAndEnergy ?
                 null :
                 (value?.power && value.energy) ?
                     `⚡${value.power.toFixed(2)}W | ${value.energy?.toFixed(2)}J` :
-                    "Consumo não calculado"
+                    dict.table.unavailable.powerAndEnergy
 
         return (
             <div className="flex flex-1 justify-center">
@@ -123,7 +105,7 @@ function getRowValue(pickedRow: string, mode: DisplayMode) {
                         value !== null ?
 
                             <div className="flex flex-col gap-y-1 w-100">
-                                <p className={`text-${numSamples !== null ? "base" : "base"}`}>{toks}</p>
+                                <p className={`text-${numSamples !== null ? "base" : "base"}`}>{speed}</p>
                                 {
                                     numSamples &&
                                     <p className="text-xs">{numSamples}</p>
@@ -153,6 +135,7 @@ function getHeader(label: string) {
             <div className="flex flex-1 justify-center">
                 <Button
                     variant={isSelected ? "default" : "ghost"}
+                    //className={`bg-${colors.background} text-${colors.foreground}`}
                     onClick={() => column.toggleSorting(sortStatus === "asc")}
                 >
                     {label}
@@ -165,6 +148,7 @@ function getHeader(label: string) {
                     }
                 </Button>
             </div>
+
         )
     }
 }

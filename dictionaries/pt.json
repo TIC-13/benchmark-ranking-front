@@ -1,0 +1,85 @@
+{
+    "header": {
+        "links": {
+            "visionRanking": "Ranking de visão",
+            "llmRanking": "Ranking de LLMs"
+        }
+    },
+    "visionRanking": {
+        "title": "Ranking de modelos de visão",
+        "filters": {
+            "title": "Meus filtros",
+            "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
+            "models": {
+                "label": "Modelos",
+                "types": {
+                    "classification": "Classificação",
+                    "detection": "Detecção",
+                    "segmentation": "Segmentação",
+                    "language": "Linguagem",
+                    "other": "Outros"
+                }
+            },
+            "quantizations": "Quantizações",
+            "toggles": {
+                "inferenceNumber": "Mostrar número de inferências",
+                "showPowerAndEnergy": "Mostrar potência e energia consumida",
+                "orderByPowerAndEnergy": "Ordenar por potência e energia",
+                "removeAll": "Remover todos",
+                "selectAll": "Selecionar todos"
+            },
+            "buttons": {
+                "apply": "Aplicar filtro"
+            },
+            "warnings": {
+                "changesNotSaved": "Mudanças não salvas"
+            }
+        },
+        "alert": {
+            "label": "Alerta",
+            "notSupported": "Modelos não suportados"
+        },
+        "table": {
+            "inference": {
+                "singular": "inferência",
+                "plural": "inferências"
+            },
+            "unavailable": {
+                "inferencesNumber": "Inferências não calculadas",
+                "powerAndEnergy": "Consumo não calculado"
+            }
+        }
+    },
+    "llmRanking": {
+        "title": "Ranking de LLMs",
+        "filters": {
+            "title": "Meus filtros",
+            "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
+            "mode": {
+                "total": "Total",
+                "prefill": "Prefill",
+                "decode": "Decode"
+            },
+            "toggles": {
+                "conversationNumber": "Mostrar número de conversas",
+                "showPowerAndEnergy": "Mostrar potência e energia consumida",
+                "orderByPowerAndEnergy": "Ordenar por potência e energia"
+            }
+        },
+        "table": {
+            "columns": {
+                "result": {
+                    "header": "Resultado"
+                }
+            },
+            "conversation": {
+                "singular": "conversa",
+                "plural": "conversas"
+            },
+            "unavailable": {
+                "conversatiosnNumber": "Nº de conversas não calculado",
+                "powerAndEnergy": "Consumo não calculado"
+            }
+        }
+    }
+}

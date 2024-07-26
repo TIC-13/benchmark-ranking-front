@@ -1,0 +1,85 @@
+{
+    "header": {
+        "links": {
+            "visionRanking": "Vision Ranking",
+            "llmRanking": "LLM Ranking"
+        }
+    },
+    "visionRanking": {
+        "title": "Vision Model Ranking",
+        "filters": {
+            "title": "My Filters",
+            "subtitle": "Select models and quantizations to be used for calculating the results",
+            "models": {
+                "label": "Models",
+                "types": {
+                    "classification": "Classification",
+                    "detection": "Detection",
+                    "segmentation": "Segmentation",
+                    "language": "Language",
+                    "other": "Other"
+                }
+            },
+            "quantizations": "Quantizations",
+            "toggles": {
+                "inferenceNumber": "Show number of inferences",
+                "showPowerAndEnergy": "Show power and energy consumed",
+                "orderByPowerAndEnergy": "Order by power and energy",
+                "removeAll": "Remove all",
+                "selectAll": "Select all"
+            },
+            "buttons": {
+                "apply": "Apply filter"
+            },
+            "warnings": {
+                "changesNotSaved": "Changes not saved"
+            }
+        },
+        "alert": {
+            "label": "Alert",
+            "notSupported": "Models not supported"
+        },
+        "table": {
+            "inference": {
+                "singular": "inference",
+                "plural": "inferences"
+            },
+            "unavailable": {
+                "inferencesNumber": "Inferences not calculated",
+                "powerAndEnergy": "Consumption not calculated"
+            }
+        }
+    },
+    "llmRanking": {
+        "title": "LLM Ranking",
+        "filters": {
+            "title": "My Filters",
+            "subtitle": "Select models and quantizations to be used for calculating the results",
+            "mode": {
+                "total": "Total",
+                "prefill": "Prefill",
+                "decode": "Decode"
+            },
+            "toggles": {
+                "conversationNumber": "Show number of conversations",
+                "showPowerAndEnergy": "Show power and energy consumed",
+                "orderByPowerAndEnergy": "Order by power and energy"
+            }
+        },
+        "table": {
+            "columns": {
+                "result": {
+                    "header": "Result"
+                }
+            },
+            "conversation": {
+                "singular": "conversation",
+                "plural": "conversations"
+            },
+            "unavailable": {
+                "conversatiosnNumber": "Number of conversations not calculated",
+                "powerAndEnergy": "Consumption not calculated"
+            }
+        }
+    }
+}
