@@ -11,7 +11,7 @@ export default function useSimpleRanking(models: string[], quantizations: string
 
             const queryString = `models=${models.join(',')}&quantizations=${quantizations.join(',')}`;
 
-            return (await axios.get(`http://localhost:3030/phone/get/simpleRanking?${queryString}`)).data
+            return (await axios.get(`http://192.168.158.226:3030/phone/get/simpleRanking?${queryString}`)).data
         },
         retry: false,
         ...options

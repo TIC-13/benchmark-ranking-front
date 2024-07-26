@@ -84,7 +84,8 @@ function getColumnDef(rowName: string, mode: DisplayMode, sortByEnergy: boolean)
 function getRowValue(pickedRow: string, mode: DisplayMode) {
     return ({ row }: { row: Row<Inference> }) => {
 
-        const { llmRanking: dict } = useDictionary()
+        const { dictionary } = useDictionary()
+        const { llmRanking: dict} = dictionary
 
         const value = row.getValue(pickedRow) as LLMResult | null
         const { showSamples, showPowerAndEnergy } = value ?? { showSamples: true, showPowerAndEnergy: true }
@@ -148,7 +149,7 @@ function getRowValue(pickedRow: string, mode: DisplayMode) {
 function getHeader() {
     return ({ column }: { column: Column<Inference> }) => {
 
-        const dict = useDictionary()
+        const { dictionary: dict } = useDictionary()
 
         const sortStatus = column.getIsSorted()
         const isSelected = sortStatus !== false

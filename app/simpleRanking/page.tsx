@@ -56,7 +56,8 @@ type Category = {
 function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
 
-    const { visionRanking: dict } = useDictionary()
+    const { dictionary } = useDictionary()
+    const { visionRanking: dict } = dictionary
     const { classification, detection, segmentation, language, other } = dict.filters.models.types
 
     const CATEGORIES: Category[] = [

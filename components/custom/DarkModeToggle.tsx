@@ -16,7 +16,8 @@ import { useDictionary } from "../providers/DictionaryProvider"
 export function DarkModeToggle({className}: {className?: string}) {
   
   const { setTheme } = useTheme()
-  const { darkModeToggle } = useDictionary()
+  const { dictionary } = useDictionary()
+  const { darkModeToggle } = dictionary
   const { system, light, dark } = darkModeToggle
 
   return (

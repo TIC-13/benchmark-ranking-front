@@ -10,6 +10,10 @@
         "light": "Claro",
         "dark": "Escuro"
     },
+    "languageToggle": {
+        "english": "Inglês",
+        "portuguese": "Português"
+    },
     "visionRanking": {
         "title": "Ranking de modelos de visão",
         "filters": {

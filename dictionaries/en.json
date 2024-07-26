@@ -10,6 +10,10 @@
         "light": "Light",
         "dark": "Dark"
     },
+    "languageToggle": {
+        "english": "English",
+        "portuguese": "Portuguese"
+    },
     "visionRanking": {
         "title": "Vision Model Ranking",
         "filters": {

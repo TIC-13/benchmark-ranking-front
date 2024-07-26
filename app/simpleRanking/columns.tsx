@@ -75,7 +75,8 @@ function getColumnDef(rowName: string, mode: SortingMode = "speed"): ColumnDef<I
 function getRowValue(pickedRow: string) {
     return ({ row }: { row: Row<Inference> }) => {
 
-        const {visionRanking: dict} = useDictionary()
+        const { dictionary } = useDictionary()
+        const {visionRanking: dict} = dictionary
 
         const value = row.getValue(pickedRow) as Result | null
         const { showSamples, showPowerAndEnergy } = value ?? { showSamples: true, showPowerAndEnergy: true }

@@ -1,25 +1,37 @@
-// dictionary-provider.tsx
 'use client'
 
-import React from "react"
-import { getDictionary } from "@/app/[lang]/dictionaries"
+import React, { useState } from "react"
+import { getDictionary, Language } from "@/app/dictionaries"
 
 type Dictionary = Awaited<ReturnType<typeof getDictionary>>
 
-const DictionaryContext = React.createContext<Dictionary | null>(null)
+type DictionaryContextValue = {
+  dictionary: Dictionary,
+  language: Language,
+  setLanguage: (lang: Language) => void
+}
+
+const DictionaryContext = React.createContext<DictionaryContextValue | null>(null)
 
 export default function DictionaryProvider({
-  dictionary,
   children,
 }: {
-  dictionary: Dictionary
   children: React.ReactNode
 }) {
+
+  const [language, setLanguage] = useState<Language>("pt")
+  const dictionary = getDictionary(language)
+
+  const value = {
+    dictionary, language, setLanguage
+  }
+
   return (
-    <DictionaryContext.Provider value={dictionary}>
+    <DictionaryContext.Provider value={value}>
       {children}
     </DictionaryContext.Provider>
   )
+
 }
 
 export function useDictionary() {

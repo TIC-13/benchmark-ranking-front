@@ -3,10 +3,8 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import ThemeProvider from "./themeProvider";
 import NavBar from "@/components/custom/NavBar";
-import { getDictionary } from "./dictionaries";
 import DictionaryProvider from "@/components/providers/DictionaryProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
 
@@ -16,11 +14,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-
-  const dictionary = await getDictionary()
-
   return (
-    <html lang="en" className="overflow-y-scroll">
+    <html lang="en">
      
         <ThemeProvider
           attribute="class"
@@ -28,9 +23,9 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <DictionaryProvider dictionary={dictionary}>
+          <DictionaryProvider>
             <body className={inter.className}>
-              <div className="w-screen h-screen">
+              <div className="h-screen">
                 <NavBar />
                 <QueryProvider>
                   {children}

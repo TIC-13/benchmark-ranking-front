@@ -10,7 +10,7 @@ export type Model = {
 const useModels = () => 
     useQuery({
         queryKey: ["models"],
-        queryFn: async () => (await axios.get<Model[]>("http://localhost:3030/inference/get/models")).data
+        queryFn: async () => (await axios.get<Model[]>("http://192.168.158.226:3030/inference/get/models")).data
     })
 
 export default useModels

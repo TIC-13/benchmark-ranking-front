@@ -23,7 +23,8 @@ export default function DataQueryLayer() {
 
 function PageLayer() {
 
-    const { llmRanking: dict } = useDictionary()
+    const { dictionary } = useDictionary()
+    const { llmRanking: dict } = dictionary
 
     const [showSamples, setShowSamples] = useState(false)
     const [showPowerAndEnergy, setShowPowerAndEnergy] = useState(false)
