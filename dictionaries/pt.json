@@ -61,6 +61,7 @@
     },
     "llmRanking": {
         "title": "Ranking de LLMs",
+        "description": "Ranking de desempenho de LLMs.\nCompara o desempenho de LLMs por celular usando valores de tokens por segundo para realizar as tarefas de prefill e decode",
         "filters": {
             "title": "Meus filtros",
             "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
@@ -75,6 +76,27 @@
                 "orderByPowerAndEnergy": "Ordenar por potência e energia"
             }
         },
+        "help": {
+            "label": "Ajuda",
+            "content": [
+                {
+                    "value": "prefill",
+                    "label": "O que é prefill?",
+                    "content": "Prefill tok/s mede quantos tokens o modelo pode processar por segundo durante a fase inicial de configuração."
+                },
+                {
+                    "value": "decode",
+                    "label": "O que é decode?",
+                    "content": "Decode tok/s mede quantos tokens o modelo pode gerar por segundo durante a fase de decodificação."
+                },
+                {
+                    "value": "conversation",
+                    "label": "O que é uma conversa?",
+                    "content": "Uma conversa é a etapa principal na avaliação de desempenho, durante a qual um conjunto predefinido de perguntas é feito ao modelo LLM. Durante esse processo, medimos os dados usados para construir a classificação."
+                }
+            ]
+        },
+        "phoneAlert": "É possivel que os nomes dos smartphones no ranking não sejam seus nomes comerciais",     
         "table": {
             "columns": {
                 "result": {

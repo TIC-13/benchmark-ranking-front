@@ -9,11 +9,13 @@ import MainContainer from "@/components/custom/MainContainer";
 import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
 import DefaultCard from "@/components/custom/DefaultCard";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
-import { Separator } from "@/components/custom/Separator";
 import useLLMRanking from "./hooks/useLLMRanking";
 import { DropdownMenuRadio } from "@/components/custom/DropdownRadio";
 import capitalize from "@/utils/capitalize";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
+import { Accordion } from "@/components/ui/accordion";
+import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
+import { InfoIcon } from "lucide-react";
 
 export default function DataQueryLayer() {
     return (
@@ -38,6 +40,25 @@ function PageLayer() {
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text={dict.title} />
             </div>
+            <p className="w-6/12">{dict.description}</p>
+            <Accordion type="multiple">
+                <DefaultAccordionItem
+                    value="help"
+                    triggerLabel={dict.help.label}
+                >
+                    {
+                        dict.help.content.map(({ value, label, content }) =>
+                            <DefaultAccordionItem
+                                value={value}
+                                triggerLabel={label}
+                            >
+                                <p>{content}</p>
+                            </DefaultAccordionItem>
+
+                        )
+                    }
+                </DefaultAccordionItem>
+            </Accordion>
             <DefaultCard
                 title={dict.filters.title}
                 subtitle=""
@@ -50,8 +71,8 @@ function PageLayer() {
                         value={mode}
                         setValue={(value: string) => isDisplayMode(value) && setMode(value)}
                         options={[
-                            { value: "total", label: dict.filters.mode.total }, 
-                            { value: "prefill", label: dict.filters.mode.prefill }, 
+                            { value: "total", label: dict.filters.mode.total },
+                            { value: "prefill", label: dict.filters.mode.prefill },
                             { value: "decode", label: dict.filters.mode.decode }
                         ]}
                     />
@@ -61,7 +82,7 @@ function PageLayer() {
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
-                
+
                 {/*
                 <Separator />
                 <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
@@ -81,6 +102,7 @@ function PageLayer() {
                 </div>
                 */}
             </DefaultCard>
+            <span className="flex items-center gap-x-3 font-light"><InfoIcon />{dict.phoneAlert}</span>
             <Ranking
                 showSamples={showSamples}
                 showPowerAndEnergy={showPowerAndEnergy}
@@ -95,7 +117,7 @@ function PageLayer() {
         orderByEnergy?: boolean
     }
 
-    function Ranking({ showSamples, showPowerAndEnergy, orderByEnergy}: RankingLayerProps) {
+    function Ranking({ showSamples, showPowerAndEnergy, orderByEnergy }: RankingLayerProps) {
 
         const rankingQuery = useLLMRanking()
 
