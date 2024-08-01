@@ -61,6 +61,8 @@ function PageLayer() {
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
+                
+                {/*
                 <Separator />
                 <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
                     <SwitchWithLabel
@@ -77,6 +79,7 @@ function PageLayer() {
                         />
                     }
                 </div>
+                */}
             </DefaultCard>
             <Ranking
                 showSamples={showSamples}
