@@ -54,7 +54,7 @@ const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inf
     const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
 
     if (rowAValue === rowBValue) return 0;
-    return rowAValue < rowBValue ? 1 : -1;
+    return rowAValue < rowBValue ? -1 : 1;
 }
 
 export const getColumns = (mode: DisplayMode, sortByEnergy: boolean = false): ColumnDef<Inference>[] => 
