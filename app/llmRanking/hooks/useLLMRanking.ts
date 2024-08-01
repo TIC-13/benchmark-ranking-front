@@ -6,7 +6,7 @@ export default function useLLMRanking(){
     return useQuery<Inference[]>({
         queryKey: ["llmRanking"],
         queryFn: async () => 
-            (await axios.get(`http://192.168.158.226:3030/llmInference/ranking`)).data,
+            (await axios.get(`${process.env.NEXT_PUBLIC_API}/llmInference/ranking`)).data,
         retry: false
     })
 }
