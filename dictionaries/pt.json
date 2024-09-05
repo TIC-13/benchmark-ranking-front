@@ -74,6 +74,9 @@
                 "conversationNumber": "Mostrar número de conversas",
                 "showPowerAndEnergy": "Mostrar potência e energia consumida",
                 "orderByPowerAndEnergy": "Ordenar por potência e energia"
+            },
+            "models": {
+                "label": "Modelos"
             }
         },
         "help": {

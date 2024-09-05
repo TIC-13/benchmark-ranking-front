@@ -16,14 +16,32 @@ import { useDictionary } from "@/components/providers/DictionaryProvider";
 import { Accordion } from "@/components/ui/accordion";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { InfoIcon } from "lucide-react";
+import useLLMModels from "./hooks/useLLMModels";
+import { LoadingSpinner } from "@/components/custom/LoadingSpinner";
+import AccordionItemWithSwitch, { Selectable } from "@/components/custom/AccordionItemWithSwitch";
 
 export default function DataQueryLayer() {
+
+    const { data: models, isError, isLoading } = useLLMModels()
+
+    if (isError)
+        return "Error loading the page"
+
+    if (isLoading)
+        return <LoadingFullScreen />
+
     return (
-        <PageLayer />
+        <PageLayer
+            modelsFetched={models ? models.map(x => ({ value: x.name, isSelected: true })) : []}
+        />
     )
 }
 
-function PageLayer() {
+type PageLayerProps = {
+    modelsFetched: Selectable<string>[]
+}
+
+function PageLayer({ modelsFetched }: PageLayerProps) {
 
     const { dictionary } = useDictionary()
     const { llmRanking: dict } = dictionary
@@ -34,6 +52,8 @@ function PageLayer() {
     const [mode, setMode] = useState<DisplayMode>("total")
 
     const [orderByEnergy, setOrderByEnergy] = useState(false)
+
+    const [models, setModels] = useState(modelsFetched)
 
     return (
         <MainContainer>
@@ -82,6 +102,14 @@ function PageLayer() {
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
+                <Accordion type = "multiple">
+                    <AccordionItemWithSwitch
+                        data={models}
+                        setData={setModels}
+                        title={dict.filters.models.label}
+                        getItemName={(item) => item.value}
+                    />
+                </Accordion>
 
                 {/*
                 <Separator />
@@ -104,6 +132,7 @@ function PageLayer() {
             </DefaultCard>
             <span className="flex items-center gap-x-3 font-light"><InfoIcon />{dict.phoneAlert}</span>
             <Ranking
+                models={models.filter(x => x.isSelected).map(x => x.value)}
                 showSamples={showSamples}
                 showPowerAndEnergy={showPowerAndEnergy}
                 orderByEnergy={showPowerAndEnergy && orderByEnergy}
@@ -112,17 +141,18 @@ function PageLayer() {
     )
 
     type RankingLayerProps = {
+        models: string[],
         showSamples: boolean,
         showPowerAndEnergy: boolean,
         orderByEnergy?: boolean
     }
 
-    function Ranking({ showSamples, showPowerAndEnergy, orderByEnergy }: RankingLayerProps) {
+    function Ranking({ models, showSamples, showPowerAndEnergy, orderByEnergy }: RankingLayerProps) {
 
-        const rankingQuery = useLLMRanking()
+        const rankingQuery = useLLMRanking(models)
 
         if (rankingQuery.isLoading || rankingQuery.data === undefined)
-            return <LoadingFullScreen />
+            return <div className="flex justify-center items-center w-full"><LoadingSpinner/></div>
 
         console.log(rankingQuery.data)
 
