@@ -17,6 +17,7 @@
     },
     "visionRanking": {
         "title": "Ranking de modelos de visão",
+        "description": "Esse ranking classifica smartphones Android pelos valores coletados no aplicativo Speed.AI, que faz benchmarking de modelos de inteligência artificial nativamente em aparelhos Android.",
         "help": {
             "label": "Ajuda",
             "content": [
@@ -72,7 +73,7 @@
     },
     "llmRanking": {
         "title": "Ranking de LLMs",
-        "description": "Ranking de desempenho de LLMs.\nCompara o desempenho de LLMs por celular usando valores de tokens por segundo para realizar as tarefas de prefill e decode",
+        "description": "Esse ranking classifica smartphones Android pelos valores coletados no aplicativo Speed.AI LLM Version, que faz benchmarking de LLMs (Large Language Models, como Llama e Gemma) em aparelhos Android, usando a plataforma MLC LLM para a execução dos modelos.",
         "filters": {
             "title": "Meus filtros",
             "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",

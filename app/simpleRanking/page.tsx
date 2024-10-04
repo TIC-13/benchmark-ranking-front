@@ -98,6 +98,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text={dict.title} />
             </div>
+            <p className="max-w-2xl">{dict.description}</p>
             <Accordion type="multiple">
                 <DefaultAccordionItem
                     value="help"

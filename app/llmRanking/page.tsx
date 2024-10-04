@@ -60,7 +60,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text={dict.title} />
             </div>
-            <p className="w-6/12">{dict.description}</p>
+            <p className="max-w-2xl">{dict.description}</p>
             <Accordion type="multiple">
                 <DefaultAccordionItem
                     value="help"
