@@ -1,21 +1,35 @@
-## Speed.AI - Ranking (front)
+# Speed.AI - Ranking (front)
 
-**Phones ranking for Speed.AI and Speed.AI - LLM edition**
+This project is the Front-end for a ranking website made using Next.js
 
-## About
+## Prerequisites
 
-This is a ranking for the Speed.AI and Speed.AI - LLM editions, made using Next.js. The apps benchmark TensorFlow vision models and LLMs on Android, respectively. This ranking classifies phones by inference speed for vision models and tokens per second for LLMs.
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
-## How to run
+## Installation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Clone this repository;
 
-You also need to set the environment variable <b>NEXT_PUBLIC_API</b> to the URL of the backend in the <b>.env.local</b> file.
+2. Navigate to the project directory;
+
+3. Create the `.env.local` file with the URL where the backend is running. Example:
+
+   ```
+   NEXT_PUBLIC_API="http://api-adress.com"
+   ```
+
+4. Install the dependencies:
+
+   ```bash
+   yarn
+   ```
+
+## Running the application
+
+1. To start the server, run:
+
+   ```bash
+   yarn run dev
+   ```
+
+
