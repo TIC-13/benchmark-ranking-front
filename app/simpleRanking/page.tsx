@@ -98,6 +98,24 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text={dict.title} />
             </div>
+            <Accordion type="multiple">
+                <DefaultAccordionItem
+                    value="help"
+                    triggerLabel={dict.help.label}
+                >
+                    {
+                        dict.help.content.map(({ value, label, content }) =>
+                            <DefaultAccordionItem
+                                value={value}
+                                triggerLabel={label}
+                            >
+                                <p>{content}</p>
+                            </DefaultAccordionItem>
+
+                        )
+                    }
+                </DefaultAccordionItem>
+            </Accordion>
             <DefaultCard
                 title={dict.filters.title}
                 subtitle={dict.filters.subtitle}

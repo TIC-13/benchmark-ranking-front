@@ -17,6 +17,16 @@
     },
     "visionRanking": {
         "title": "Ranking de modelos de visão",
+        "help": {
+            "label": "Ajuda",
+            "content": [
+                {
+                    "value": "result",
+                    "label": "Como os valores do ranking são calculados?",
+                    "content": "Os valores do ranking são representados em milissegundos, sendo obtidos por meio de uma média ponderada que leva em conta o número de imagens usados para a execução de cada teste. Apenas inferências que cumprem os critérios representados no filtro são consideradas."
+                }
+            ]
+        },
         "filters": {
             "title": "Meus filtros",
             "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
@@ -97,6 +107,11 @@
                     "value": "conversation",
                     "label": "O que é uma conversa?",
                     "content": "Uma conversa é a etapa principal na avaliação de desempenho, durante a qual um conjunto predefinido de perguntas é feito ao modelo LLM. Durante esse processo, medimos os dados usados para construir a classificação."
+                },
+                {
+                    "value": "result",
+                    "label": "Como os tokens por segundo são calculados?",
+                    "content": "Os tokens por segundo são calculados por meio de uma média simples de todas as conversas."
                 }
             ]
         },

@@ -17,6 +17,16 @@
     },
     "visionRanking": {
         "title": "Vision Model Ranking",
+        "help": {
+            "label": "Help",
+            "content": [
+                {
+                    "value": "result",
+                    "label": "How are the ranking values calculated?",
+                    "content": "The ranking values are represented in milliseconds and are obtained through a weighted average that takes into account the number of images used for each test execution. Only inferences that meet the criteria represented in the filter are considered."
+                }
+            ]
+        },
         "filters": {
             "title": "My Filters",
             "subtitle": "Select models and quantizations to be used for calculating the results",
@@ -97,6 +107,11 @@
                     "value": "conversation",
                     "label": "What is a conversation?",
                     "content": "A conversation is the primary step in benchmarking, during which a predetermined set of questions is posed to the LLM model. Throughout this process, we measure the data used to construct the ranking."
+                },
+                {
+                    "value": "result",
+                    "label": "How are tokens per second calculated?",
+                    "content": "Tokens per second are calculated using a simple average of all conversations."
                 }
             ]
         },
