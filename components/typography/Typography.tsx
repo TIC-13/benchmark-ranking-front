@@ -29,4 +29,10 @@ export function TypographyH3({ text }: TypographyProps) {
 
 export function TypographyLarge({ text }: TypographyProps) {
     return <div className="text-lg font-semibold">{text}</div>
-  }
+}
+
+export function TypographyP({ text }: TypographyProps) {
+    return (
+        <p className="leading-7 [&:not(:first-child)]:mt-6">{text}</p>
+    )
+}
