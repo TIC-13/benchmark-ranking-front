@@ -25,12 +25,10 @@ export default async function RootLayout({
         >
           <DictionaryProvider>
             <body className={inter.className}>
-              <div className="h-screen">
                 <NavBar />
                 <QueryProvider>
                   {children}
                 </QueryProvider>
-              </div>
             </body>
           </DictionaryProvider>
         </ThemeProvider>
