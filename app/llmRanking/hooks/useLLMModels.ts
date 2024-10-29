@@ -7,7 +7,7 @@ export type LLMModel = {
 
 const useLLMModels = () => 
     useQuery({
-        queryKey: ["models"],
+        queryKey: ["llmModels"],
         queryFn: async () => (await axios.get<LLMModel[]>(`${process.env.NEXT_PUBLIC_API}/llmInference/models`)).data
     })
 
