@@ -58,13 +58,12 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     const { dictionary } = useDictionary()
     const { visionRanking: dict } = dictionary
-    const { classification, detection, segmentation, language, other } = dict.filters.models.types
+    const { classification, detection, segmentation, other } = dict.filters.models.types
 
     const CATEGORIES: Category[] = [
         { value: "CLASSIFICATION", label: classification },
         { value: "DETECTION", label: detection },
         { value: "SEGMENTATION", label: segmentation },
-        { value: "LANGUAGE", label: language }
     ]
 
     const [models, setModels] = useState(modelsList)
