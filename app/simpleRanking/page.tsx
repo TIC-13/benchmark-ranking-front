@@ -19,9 +19,9 @@ import AccordionInCard from "@/components/custom/AccordionInCard";
 import DefaultCard from "@/components/custom/DefaultCard";
 import AccordionItemWithSwitch, { Selectable } from "@/components/custom/AccordionItemWithSwitch";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
-import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import { Separator } from "@/components/custom/Separator";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
+import { Switch } from "@radix-ui/react-switch";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -129,8 +129,6 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                         {
                             CATEGORIES.map(category =>
                                 <AccordionItemWithSwitch
-                                    labelOn={dict.filters.toggles.removeAll}
-                                    labelOff={dict.filters.toggles.selectAll}
                                     data={models}
                                     setData={setModels}
                                     title={category.label}
@@ -140,8 +138,6 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                             )
                         }
                         <AccordionItemWithSwitch
-                            labelOn={dict.filters.toggles.removeAll}
-                            labelOff={dict.filters.toggles.selectAll}
                             data={models}
                             setData={setModels}
                             title={other}
@@ -158,22 +154,19 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                         getItemName={(item) => item.value}
                     />
                 </Accordion>
-                <SwitchWithLabel
-                    label={dict.filters.toggles.inferenceNumber}
+                <Switch
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
                 <Separator />
                 <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
-                    <SwitchWithLabel
-                        label={dict.filters.toggles.showPowerAndEnergy}
+                    <Switch
                         checked={showPowerAndEnergy}
                         onCheckedChange={setShowPowerAndEnergy}
                     />
                     {
                         showPowerAndEnergy &&
-                        <SwitchWithLabel
-                            label={dict.filters.toggles.orderByPowerAndEnergy}
+                        <Switch
                             checked={orderByEnergy}
                             onCheckedChange={setOrderByEnergy}
                         />
