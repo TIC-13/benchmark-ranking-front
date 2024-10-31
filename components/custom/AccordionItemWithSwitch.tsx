@@ -1,13 +1,14 @@
 
 import { useState, useEffect } from "react"
 import {
+    Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Category } from "@/app/simpleRanking/page";
 
 export interface Selectable<T> {
     value: T,
@@ -15,16 +16,16 @@ export interface Selectable<T> {
 }
 
 interface SelectionProps<T> {
-    labelOn?: string,
-    labelOff?: string,
     data: Selectable<T>[],
     setData: React.Dispatch<React.SetStateAction<Selectable<T>[]>>,
     title: string,
     getItemName: (item: Selectable<T>) => string,
     showItem?: (item: Selectable<T>) => boolean,
+    openSelf: () => void,
+    closeSelf: () => void
 }
 
-export default function AccordionItemWithSwitch<T>({ labelOn, labelOff, data, setData, title, getItemName, showItem = (item) => true }: SelectionProps<T>) {
+export default function AccordionItemWithSwitch<T>({ data, setData, title, getItemName, showItem = (item) => true, openSelf, closeSelf }: SelectionProps<T>) {
 
     const [checked, setChecked] = useState(true)
 
@@ -54,10 +55,12 @@ export default function AccordionItemWithSwitch<T>({ labelOn, labelOff, data, se
                         <Switch
                             id="check"
                             checked={checked}
-                            onCheckedChange={onCheckedChange}
+                            onCheckedChange={(checked: boolean) => {
+                                onCheckedChange(checked)
+                                checked? openSelf(): closeSelf()
+                            }}
                             onClick={(event) => event.stopPropagation()}
                         />
-                        <Label htmlFor="check">{checked ? labelOn : labelOff}</Label>
                     </div>
                 </div>
             </AccordionTrigger>
@@ -82,4 +85,12 @@ export default function AccordionItemWithSwitch<T>({ labelOn, labelOff, data, se
             </AccordionContent>
         </AccordionItem>
     );
+}
+
+export function useAccordionWithSwitch(categories: Category[]) {
+    const [items, setItems] = useState(categories.map(category => category.label))
+    const addItem = (item: string) => setItems([...items, item]) 
+    const removeItem = (item: string) => setItems(items.filter(i => i !== item))
+
+    return {items, setItems, addItem, removeItem}
 }

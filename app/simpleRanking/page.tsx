@@ -13,15 +13,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
 } from "@/components/ui/accordion"
 import useQuantizations from "./hooks/useQuantizations";
 import AccordionInCard from "@/components/custom/AccordionInCard";
 import DefaultCard from "@/components/custom/DefaultCard";
-import AccordionItemWithSwitch, { Selectable } from "@/components/custom/AccordionItemWithSwitch";
+import AccordionItemWithSwitch, { Selectable, useAccordionWithSwitch } from "@/components/custom/AccordionItemWithSwitch";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { Separator } from "@/components/custom/Separator";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
 import { Switch } from "@radix-ui/react-switch";
+import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -48,7 +52,7 @@ type PageLayerProps = {
     quantizationsList: Selectable<string>[],
 }
 
-type Category = {
+export type Category = {
     value: string,
     label: string
 }
@@ -92,6 +96,9 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
         setInvalidModelsQuantizations(getInvalidModelsQuantizations())
     }, [modelsToFetch, quantizationsToFetch])
 
+
+    const { items, setItems, addItem, removeItem } = useAccordionWithSwitch(CATEGORIES)
+
     return (
         <MainContainer>
             <div className="flex flex-1 justify-between">
@@ -126,47 +133,62 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                         value="modelos"
                         triggerLabel={dict.filters.models.label}
                     >
-                        {
-                            CATEGORIES.map(category =>
-                                <AccordionItemWithSwitch
-                                    data={models}
-                                    setData={setModels}
-                                    title={category.label}
-                                    getItemName={(item) => item.value.ml_model}
-                                    showItem={(item) => item.value.category === category.value}
-                                />
-                            )
-                        }
-                        <AccordionItemWithSwitch
-                            data={models}
-                            setData={setModels}
-                            title={other}
-                            getItemName={(item) => item.value.ml_model}
-                            showItem={(item) => !CATEGORIES.map(x => x.value)
-                                .includes(item.value.category)
+                        <Accordion
+                            type="multiple"
+                            value={items}
+                            onValueChange={setItems}
+                        >
+                            {
+                                CATEGORIES.map(category =>
+                                    <AccordionItemWithSwitch
+                                        data={models}
+                                        setData={setModels}
+                                        title={category.label}
+                                        getItemName={(item) => item.value.ml_model}
+                                        showItem={(item) => item.value.category === category.value}
+                                        openSelf={() => addItem(category.label)}
+                                        closeSelf={() => removeItem(category.label)}
+                                    />
+                                )
                             }
-                        />
+                            <AccordionItemWithSwitch
+                                data={models}
+                                setData={setModels}
+                                title={other}
+                                getItemName={(item) => item.value.ml_model}
+                                showItem={(item) => !CATEGORIES.map(x => x.value)
+                                    .includes(item.value.category)
+                                }
+                                openSelf={() => addItem(other)}
+                                closeSelf={() => removeItem(other)}
+                            />
+                        </Accordion> 
                     </DefaultAccordionItem>
                     <AccordionItemWithSwitch
                         data={quantizations}
                         setData={setQuantizations}
                         title={dict.filters.quantizations}
                         getItemName={(item) => item.value}
+                        openSelf={() => null}
+                        closeSelf={() => null}
                     />
                 </Accordion>
-                <Switch
+                <SwitchWithLabel
+                    label={dict.filters.toggles.inferenceNumber}
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
                 <Separator />
                 <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
-                    <Switch
+                    <SwitchWithLabel
+                        label={dict.filters.toggles.showPowerAndEnergy}
                         checked={showPowerAndEnergy}
                         onCheckedChange={setShowPowerAndEnergy}
                     />
                     {
                         showPowerAndEnergy &&
-                        <Switch
+                        <SwitchWithLabel
+                            label={dict.filters.toggles.orderByPowerAndEnergy}
                             checked={orderByEnergy}
                             onCheckedChange={setOrderByEnergy}
                         />
@@ -205,6 +227,33 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     </Badge>
                 }
             </div>
+        )
+    }
+
+
+    function AccordionMultipleSwitch() {
+
+        const [items, setItems] = useState<string[]>([])
+
+        return (
+            <Accordion
+                type="multiple"
+                value={items}
+                onValueChange={setItems}
+            >
+                <AccordionItem value="item-1">
+                    <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                    <AccordionContent>
+                        Yes. It adheres to the WAI-ARIA design pattern.
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                    <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                    <AccordionContent>
+                        Yes. It adheres to the WAI-ARIA design pattern.
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         )
     }
 
