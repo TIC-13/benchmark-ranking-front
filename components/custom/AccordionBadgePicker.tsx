@@ -9,23 +9,14 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge";
 import { Category } from "@/app/simpleRanking/page";
+import { BadgePickerContent, BadgePickerContentProps, BadgePickerProps } from "./BadgePicker";
 
-export interface Selectable<T> {
-    value: T,
-    isSelected: boolean
-}
-
-interface SelectionProps<T> {
-    data: Selectable<T>[],
-    setData: React.Dispatch<React.SetStateAction<Selectable<T>[]>>,
-    title: string,
-    getItemName: (item: Selectable<T>) => string,
-    showItem?: (item: Selectable<T>) => boolean,
+type AccordionBadgeSelectorProps<T> = BadgePickerProps<T> & {
     openSelf: () => void,
     closeSelf: () => void
 }
 
-export default function AccordionItemWithSwitch<T>({ data, setData, title, getItemName, showItem = (item) => true, openSelf, closeSelf }: SelectionProps<T>) {
+export default function AccordionBadgeSelector<T>({ data, setData, title, getItemName, showItem = (item) => true, openSelf, closeSelf }: AccordionBadgeSelectorProps<T>) {
 
     const [checked, setChecked] = useState(true)
 
@@ -57,40 +48,29 @@ export default function AccordionItemWithSwitch<T>({ data, setData, title, getIt
                             checked={checked}
                             onCheckedChange={(checked: boolean) => {
                                 onCheckedChange(checked)
-                                checked? openSelf(): closeSelf()
+                                checked ? openSelf() : closeSelf()
                             }}
                             onClick={(event) => event.stopPropagation()}
                         />
                     </div>
                 </div>
             </AccordionTrigger>
-            <AccordionContent className="flex flex-row gap-x-3 gap-y-3 flex-wrap">
-                {
-                    data.map((x, idx) =>
-                        showItem(x) &&
-                        <Badge
-                            variant={x.isSelected ? "default" : "outline"}
-                            onClick={() =>
-                                setData((prev) => {
-                                    const arr = [...prev]
-                                    arr[idx] = { ...arr[idx], isSelected: !prev[idx].isSelected }
-                                    return arr
-                                })
-                            }
-                        >
-                            {getItemName(x)}
-                        </Badge>
-                    )
-                }
+            <AccordionContent>
+                <BadgePickerContent
+                    data={data}
+                    setData={setData}
+                    getItemName={getItemName}
+                    showItem={showItem}
+                />
             </AccordionContent>
         </AccordionItem>
     );
 }
 
-export function useAccordionWithSwitch(categories: Category[]) {
+export function useAccordionBadgePicker(categories: Category[]) {
     const [items, setItems] = useState(categories.map(category => category.label))
-    const addItem = (item: string) => setItems([...items, item]) 
+    const addItem = (item: string) => setItems([...items, item])
     const removeItem = (item: string) => setItems(items.filter(i => i !== item))
 
-    return {items, setItems, addItem, removeItem}
+    return { items, setItems, addItem, removeItem }
 }

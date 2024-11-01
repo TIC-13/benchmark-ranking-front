@@ -18,8 +18,8 @@ import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { InfoIcon } from "lucide-react";
 import useLLMModels from "./hooks/useLLMModels";
 import { LoadingSpinner } from "@/components/custom/LoadingSpinner";
-import AccordionItemWithSwitch, { Selectable, useAccordionWithSwitch } from "@/components/custom/AccordionItemWithSwitch";
-import { useAccordion } from "@nextui-org/react";
+import { Selectable } from "@/components/custom/BadgePicker";
+import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
 
 export default function DataQueryLayer() {
 
@@ -55,6 +55,8 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
     const [orderByEnergy, setOrderByEnergy] = useState(false)
 
     const [models, setModels] = useState(modelsFetched)
+
+    const {items, setItems} = useAccordionBadgePicker([{value: dict.filters.models.label, label: dict.filters.models.label}])
 
     return (
         <MainContainer>
@@ -103,8 +105,8 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
-                <Accordion type = "multiple" value={[dict.filters.models.label]}>
-                    <AccordionItemWithSwitch
+                <Accordion type = "multiple" value={items} onValueChange={setItems}>
+                    <AccordionBadgePicker
                         data={models}
                         setData={setModels}
                         title={dict.filters.models.label}

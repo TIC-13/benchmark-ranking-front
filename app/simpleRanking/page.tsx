@@ -17,13 +17,13 @@ import {
 import useQuantizations from "./hooks/useQuantizations";
 import AccordionInCard from "@/components/custom/AccordionInCard";
 import DefaultCard from "@/components/custom/DefaultCard";
-import AccordionItemWithSwitch, { Selectable, useAccordionWithSwitch } from "@/components/custom/AccordionItemWithSwitch";
+import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { Separator } from "@/components/custom/Separator";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
-import { CircleAlert } from "lucide-react"
 import TextWarning from "@/components/custom/TextWarning";
+import BadgePicker, { Selectable } from "@/components/custom/BadgePicker";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -68,6 +68,8 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
         { value: "SEGMENTATION", label: segmentation },
     ]
 
+    const CATEGORY_OTHER: Category = {value: "OTHER", label: other}
+
     const [models, setModels] = useState(modelsList)
     const [quantizations, setQuantizations] = useState(quantizationsList)
 
@@ -95,7 +97,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     }, [modelsToFetch, quantizationsToFetch])
 
 
-    const { items, setItems, addItem, removeItem } = useAccordionWithSwitch(CATEGORIES)
+    const { items, setItems, addItem, removeItem } = useAccordionBadgePicker([...CATEGORIES, CATEGORY_OTHER])
 
     return (
         <MainContainer>
@@ -138,7 +140,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                         >
                             {
                                 CATEGORIES.map(category =>
-                                    <AccordionItemWithSwitch
+                                    <AccordionBadgePicker<Model>
                                         data={models}
                                         setData={setModels}
                                         title={category.label}
@@ -149,7 +151,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                                     />
                                 )
                             }
-                            <AccordionItemWithSwitch
+                            <AccordionBadgePicker<Model>
                                 data={models}
                                 setData={setModels}
                                 title={other}
@@ -162,15 +164,15 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                             />
                         </Accordion>
                     </DefaultAccordionItem>
-                    <AccordionItemWithSwitch
-                        data={quantizations}
-                        setData={setQuantizations}
-                        title={dict.filters.quantizations}
-                        getItemName={(item) => item.value}
-                        openSelf={() => null}
-                        closeSelf={() => null}
-                    />
                 </Accordion>
+                <BadgePicker<string>
+                    data={quantizations}
+                    setData={setQuantizations}
+                    title={dict.filters.quantizations}
+                    getItemName={(item) => item.value}
+                    noLessThanOneSelected={true}
+                />
+                <Separator/>
                 <SwitchWithLabel
                     label={dict.filters.toggles.inferenceNumber}
                     checked={showSamples}
@@ -220,7 +222,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 </Button>
                 {
                     refreshPending &&
-                    <TextWarning text = {dict.filters.warnings.changesNotSaved}/>
+                    <TextWarning text={dict.filters.warnings.changesNotSaved} />
                 }
             </div>
         )
