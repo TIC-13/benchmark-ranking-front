@@ -18,7 +18,8 @@ import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { InfoIcon } from "lucide-react";
 import useLLMModels from "./hooks/useLLMModels";
 import { LoadingSpinner } from "@/components/custom/LoadingSpinner";
-import AccordionItemWithSwitch, { Selectable } from "@/components/custom/AccordionItemWithSwitch";
+import AccordionItemWithSwitch, { Selectable, useAccordionWithSwitch } from "@/components/custom/AccordionItemWithSwitch";
+import { useAccordion } from "@nextui-org/react";
 
 export default function DataQueryLayer() {
 
@@ -102,12 +103,14 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
-                <Accordion type = "multiple">
+                <Accordion type = "multiple" value={[dict.filters.models.label]}>
                     <AccordionItemWithSwitch
                         data={models}
                         setData={setModels}
                         title={dict.filters.models.label}
                         getItemName={(item) => item.value}
+                        openSelf={() => null}
+                        closeSelf={() => null}
                     />
                 </Accordion>
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 
 import { DataTable } from "./data-table";
 import { getColumns } from "./columns";
-import { TypographyH2 } from "@/components/typography/Typography";
+import { TypographyH2, TypographyP } from "@/components/typography/Typography";
 import useSimpleRanking from "./hooks/useSimpleRanking";
 import MainContainer from "@/components/custom/MainContainer";
 import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
@@ -12,10 +12,7 @@ import useModels, { Model } from "./hooks/useModels";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+    Accordion
 } from "@/components/ui/accordion"
 import useQuantizations from "./hooks/useQuantizations";
 import AccordionInCard from "@/components/custom/AccordionInCard";
@@ -24,8 +21,9 @@ import AccordionItemWithSwitch, { Selectable, useAccordionWithSwitch } from "@/c
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { Separator } from "@/components/custom/Separator";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
-import { Switch } from "@radix-ui/react-switch";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
+import { CircleAlert } from "lucide-react"
+import TextWarning from "@/components/custom/TextWarning";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -162,7 +160,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                                 openSelf={() => addItem(other)}
                                 closeSelf={() => removeItem(other)}
                             />
-                        </Accordion> 
+                        </Accordion>
                     </DefaultAccordionItem>
                     <AccordionItemWithSwitch
                         data={quantizations}
@@ -212,7 +210,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     function ApplyFilterButton() {
         return (
-            <div className="flex flex-row gap-x-5">
+            <div className="flex flex-row gap-x-5 items-center">
                 <Button
                     onClick={onRefetch}
                     className="max-w-xs"
@@ -222,38 +220,9 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 </Button>
                 {
                     refreshPending &&
-                    <Badge variant="destructive">
-                        {dict.filters.warnings.changesNotSaved}
-                    </Badge>
+                    <TextWarning text = {dict.filters.warnings.changesNotSaved}/>
                 }
             </div>
-        )
-    }
-
-
-    function AccordionMultipleSwitch() {
-
-        const [items, setItems] = useState<string[]>([])
-
-        return (
-            <Accordion
-                type="multiple"
-                value={items}
-                onValueChange={setItems}
-            >
-                <AccordionItem value="item-1">
-                    <AccordionTrigger>Is it accessible?</AccordionTrigger>
-                    <AccordionContent>
-                        Yes. It adheres to the WAI-ARIA design pattern.
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-2">
-                    <AccordionTrigger>Is it accessible?</AccordionTrigger>
-                    <AccordionContent>
-                        Yes. It adheres to the WAI-ARIA design pattern.
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
         )
     }
 
