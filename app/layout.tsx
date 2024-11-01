@@ -7,6 +7,7 @@ import ThemeProvider from "./themeProvider";
 import NavBar from "@/components/custom/NavBar";
 import DictionaryProvider from "@/components/providers/DictionaryProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 export default async function RootLayout({
   children,
@@ -25,6 +26,7 @@ export default async function RootLayout({
         >
           <DictionaryProvider>
             <body className={inter.className}>
+                <Toaster/>
                 <NavBar />
                 <QueryProvider>
                   {children}

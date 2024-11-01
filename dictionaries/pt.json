@@ -15,6 +15,9 @@
         "english": "Inglês",
         "portuguese": "Português"
     },
+    "generalWarnings": {
+        "atLeastOneSelected": "Pelo menos um valor deve ser selecionado"
+    },
     "visionRanking": {
         "title": "Ranking de modelos de visão",
         "description": "Esse ranking classifica smartphones Android pelos valores coletados no aplicativo Speed.AI, que faz benchmarking de modelos de inteligência artificial nativamente em aparelhos Android.",

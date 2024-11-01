@@ -15,6 +15,9 @@
         "english": "English",
         "portuguese": "Portuguese"
     },
+    "generalWarnings": {
+        "atLeastOneSelected": "At least one value should be selected"
+    },
     "visionRanking": {
         "title": "Vision Model Ranking",
         "description": "This ranking classifies Android smartphones based on the data collected by the Speed.AI app, which benchmarks AI models natively on Android devices.",

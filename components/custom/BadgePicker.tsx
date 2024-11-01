@@ -1,5 +1,7 @@
 import { Badge } from "../ui/badge";
 import { TypographyP } from "../typography/Typography";
+import { useToast } from "@/hooks/use-toast";
+import { useDictionary } from "../providers/DictionaryProvider";
 
 export interface Selectable<T> {
     value: T,
@@ -33,6 +35,10 @@ export default function BadgePicker<T>({ title, data, setData, getItemName, show
 export type BadgePickerContentProps<T> = Omit<BadgePickerProps<T>, "title">
 
 export function BadgePickerContent<T>({ data, setData, getItemName, showItem = (item) => true, noLessThanOneSelected }: BadgePickerContentProps<T>) {
+    
+    const dict = useDictionary()
+    const { toast } = useToast()
+    
     return (
         <div className="flex flex-row gap-x-3 gap-y-3 flex-wrap">
             {
@@ -43,9 +49,16 @@ export function BadgePickerContent<T>({ data, setData, getItemName, showItem = (
                         onClick={() =>
                             setData((prev) => {
                                 const arr = [...prev]
+                                const shouldNotUnmark = (noLessThanOneSelected && arr.filter(x => x.isSelected).length == 1)
+                                if(shouldNotUnmark) {
+                                    toast({
+                                        title: dict.dictionary.generalWarnings.atLeastOneSelected,
+                                        description: "",
+                                      })
+                                }
                                 arr[idx] = { 
                                     ...arr[idx], 
-                                    isSelected: (noLessThanOneSelected && arr.filter(x => x.isSelected).length == 1)? 
+                                    isSelected: shouldNotUnmark? 
                                         true: 
                                         !prev[idx].isSelected 
                                 }
