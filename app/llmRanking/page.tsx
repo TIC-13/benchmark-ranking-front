@@ -156,22 +156,20 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
 
         const rankingQuery = useLLMRanking(models)
 
-        if (rankingQuery.isLoading || rankingQuery.data === undefined)
-            return <div className="flex justify-center items-center w-full"><LoadingSpinner/></div>
-
         console.log(rankingQuery.data)
 
-        let data = rankingQuery.data.map(inference =>
+        let data = rankingQuery.data?.map(inference =>
         ({
             ...inference,
             result: { ...inference.result, showSamples, showPowerAndEnergy },
         })
-        )
+        ) ?? []
 
         return (
             <DataTable
                 columns={getColumns(mode, orderByEnergy)}
                 data={data}
+                isLoading={rankingQuery.isLoading || rankingQuery.isRefetching}
             />
         )
     }

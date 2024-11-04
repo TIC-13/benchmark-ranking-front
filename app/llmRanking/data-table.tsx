@@ -19,15 +19,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { LoadingSpinner } from "@/components/custom/LoadingSpinner"
+import { Button } from "@/components/ui/button"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  data: TData[],
+  isLoading: boolean
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isLoading
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -74,11 +78,22 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                {row.getVisibleCells().map((cell, idx) => idx == 0 || !isLoading ? (
+                  <TableCell key={cell.id} colSpan={1}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
-                ))}
+                ) :
+                  <TableCell key={cell.id} colSpan={1}>
+                    <div className="flex flex-1 justify-center">
+                      <Button
+                        variant="ghost"
+                        className="italic min-w-52 align-center-justify-center"
+                      >
+                        <LoadingSpinner />
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))
           ) : (
