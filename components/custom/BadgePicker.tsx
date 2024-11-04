@@ -49,7 +49,11 @@ export function BadgePickerContent<T>({ data, setData, getItemName, showItem = (
                         onClick={() =>
                             setData((prev) => {
                                 const arr = [...prev]
-                                const shouldNotUnmark = (noLessThanOneSelected && arr.filter(x => x.isSelected).length == 1)
+                                const shouldNotUnmark = (
+                                    noLessThanOneSelected && 
+                                    arr.filter(x => x.isSelected).length == 1 && 
+                                    arr[idx].isSelected
+                                )
                                 if(shouldNotUnmark) {
                                     toast({
                                         title: dict.dictionary.generalWarnings.atLeastOneSelected,
