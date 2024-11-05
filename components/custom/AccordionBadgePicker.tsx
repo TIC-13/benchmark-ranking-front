@@ -7,16 +7,12 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge";
 import { Category } from "@/app/simpleRanking/page";
-import { BadgePickerContent, BadgePickerContentProps, BadgePickerProps } from "./BadgePicker";
+import { BadgePickerContent, BadgePickerProps } from "./BadgePicker";
 
-type AccordionBadgeSelectorProps<T> = BadgePickerProps<T> & {
-    openSelf: () => void,
-    closeSelf: () => void
-}
+type AccordionBadgeSelectorProps<T> = BadgePickerProps<T>
 
-export default function AccordionBadgeSelector<T>({ data, setData, title, getItemName, showItem = (item) => true, openSelf, closeSelf }: AccordionBadgeSelectorProps<T>) {
+export default function AccordionBadgeSelector<T>({ data, setData, title, getItemName, showItem = (item) => true}: AccordionBadgeSelectorProps<T>) {
 
     const [checked, setChecked] = useState(true)
 
@@ -48,7 +44,7 @@ export default function AccordionBadgeSelector<T>({ data, setData, title, getIte
                             checked={checked}
                             onCheckedChange={(checked: boolean) => {
                                 onCheckedChange(checked)
-                                checked ? openSelf() : closeSelf()
+                                //checked ? openSelf() : closeSelf()
                             }}
                             onClick={(event) => event.stopPropagation()}
                         />

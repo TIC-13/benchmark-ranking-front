@@ -150,8 +150,6 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                                         title={category.label}
                                         getItemName={(item) => item.value.ml_model}
                                         showItem={(item) => item.value.category === category.value}
-                                        openSelf={() => addItem(category.label)}
-                                        closeSelf={() => removeItem(category.label)}
                                     />
                                 )
                             }
@@ -163,8 +161,6 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                                 showItem={(item) => !CATEGORIES.map(x => x.value)
                                     .includes(item.value.category)
                                 }
-                                openSelf={() => addItem(other)}
-                                closeSelf={() => removeItem(other)}
                             />
                         </Accordion>
                     </DefaultAccordionItem>

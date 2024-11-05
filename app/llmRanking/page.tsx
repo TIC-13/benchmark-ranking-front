@@ -114,8 +114,6 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
                         setData={setModels}
                         title={dict.filters.models.label}
                         getItemName={(item) => item.value}
-                        openSelf={() => null}
-                        closeSelf={() => null}
                     />
                 </Accordion>
 
