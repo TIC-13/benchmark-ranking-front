@@ -36,7 +36,11 @@ export default function DataQueryLayer() {
     return (
         <PageLayer
             modelsList={modelsQuery.data.map(x => {
-                return { value: x, isSelected: true }
+                return { 
+                    value: x, 
+                    isSelected: true, 
+                    tooltipContent: x.quantizations.join(", ")
+                }
             })}
             quantizationsList={quantizationsQuery.data.map(x => {
                 return { value: x, isSelected: true }

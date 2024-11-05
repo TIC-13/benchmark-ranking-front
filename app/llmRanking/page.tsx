@@ -33,7 +33,10 @@ export default function DataQueryLayer() {
 
     return (
         <PageLayer
-            modelsFetched={models ? models.map(x => ({ value: x.name, isSelected: true })) : []}
+            modelsFetched={models ? models.map(x => ({ 
+                value: x.name, 
+                isSelected: true
+            })) : []}
         />
     )
 }
@@ -155,8 +158,6 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
     function Ranking({ models, showSamples, showPowerAndEnergy, orderByEnergy }: RankingLayerProps) {
 
         const rankingQuery = useLLMRanking(models)
-
-        console.log(rankingQuery.data)
 
         let data = rankingQuery.data?.map(inference =>
         ({
