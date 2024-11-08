@@ -40,12 +40,19 @@ const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inf
     const maxIfDoesNotExist = (number: number | undefined) => number ? number: maxValue 
 
     const getRowValue = (row: Row<Inference>) => {
+
         const value = row.getValue<LLMResult | null>(columnId)
+        const prefill = value?.prefill
+        const decode = value?.decode
+        const total = (prefill !== undefined && decode !== undefined)? prefill + decode: undefined
+
         console.log(`rowValue col ID ${columnId}`, value)
         if(mode === "prefill")
-            return maxIfDoesNotExist(value?.prefill)
+            return maxIfDoesNotExist(prefill)
         if(mode === "decode")
-            return maxIfDoesNotExist(value?.decode)
+            return maxIfDoesNotExist(decode)
+        if(mode === "total")
+            return maxIfDoesNotExist(total)
         if(mode === "energy")
             return maxIfDoesNotExist(value?.energy)
         return value ? value.energy ?? maxValue: maxValue
@@ -92,13 +99,17 @@ function getRowValue(pickedRow: string, mode: DisplayMode) {
         
         const invalidErrorMode = () => { throw Error("Invalid mode") }
         
+        const prefill = value?.prefill
+        const decode = value?.decode
+        const total = (prefill !== undefined && decode !== undefined)? prefill + decode: undefined
+
         const toksRaw = 
             mode === "decode"? 
-                value?.decode: 
+                decode: 
             mode === "prefill"?
-                value?.prefill:
+                prefill:
             mode === "total"?
-                (value?.prefill ?? 0) + (value?.decode ?? 0):
+                total:
                 invalidErrorMode()
 
         const toks = toksRaw ? `${toksRaw.toFixed(2)} tok/s` : "-"
