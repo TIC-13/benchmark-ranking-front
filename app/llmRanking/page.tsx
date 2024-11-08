@@ -20,6 +20,7 @@ import useLLMModels from "./hooks/useLLMModels";
 import { LoadingSpinner } from "@/components/custom/LoadingSpinner";
 import { Selectable } from "@/components/custom/BadgePicker";
 import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
+import phoneNames from "./utils/phone_names.json"
 
 export default function DataQueryLayer() {
 
@@ -161,6 +162,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
         ({
             ...inference,
             result: { ...inference.result, showSamples, showPowerAndEnergy },
+            phone: {...inference.phone, phone_model: ((phoneNames as any)[inference.phone.phone_model] ?? inference.phone.phone_model)}
         })
         ) ?? []
 
