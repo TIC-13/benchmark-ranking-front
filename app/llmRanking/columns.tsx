@@ -36,8 +36,8 @@ export function isDisplayMode(mode: string): mode is DisplayMode {
 type SortingMode = DisplayMode| "energy"
 
 const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
-    const maxValue = 99999999
-    const maxIfDoesNotExist = (number: number | undefined) => number ? number: maxValue 
+    const maxValue = -99999999
+    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined ? number: maxValue 
 
     const getRowValue = (row: Row<Inference>) => {
 
