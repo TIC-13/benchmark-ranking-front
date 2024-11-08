@@ -29,7 +29,7 @@ export default function NavBar() {
             width <= LARGE_SCREEN_THRESHOLD &&
             <LinksSmallScreen/>
           }
-          <Link href="/info" className="mr-auto flex items-center gap-2 text-lg font-semibold" prefetch={false}>
+          <Link href="https://luxai.cin.ufpe.br/index.html" className="mr-auto flex items-center gap-2 text-lg font-semibold" prefetch={false}>
             <Aperture className="w-5 h-5" />
             <span>LuxAI</span>
           </Link>
