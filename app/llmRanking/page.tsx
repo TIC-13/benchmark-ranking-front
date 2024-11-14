@@ -17,10 +17,9 @@ import { Accordion } from "@/components/ui/accordion";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { InfoIcon } from "lucide-react";
 import useLLMModels from "./hooks/useLLMModels";
-import { LoadingSpinner } from "@/components/custom/LoadingSpinner";
 import { Selectable } from "@/components/custom/BadgePicker";
 import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
-import phoneNames from "./utils/phone_names.json"
+import phoneNames from "@/app/src/utils/phone_names.json"
 
 export default function DataQueryLayer() {
 

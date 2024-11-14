@@ -24,6 +24,7 @@ import { useDictionary } from "@/components/providers/DictionaryProvider";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import TextWarning from "@/components/custom/TextWarning";
 import BadgePicker, { Selectable } from "@/components/custom/BadgePicker";
+import phoneNames from "@/app/src/utils/phone_names.json"
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -304,6 +305,7 @@ function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy
         CPU: { ...inference.CPU, showSamples, showPowerAndEnergy },
         GPU: { ...inference.GPU, showSamples, showPowerAndEnergy },
         NNAPI: { ...inference.NNAPI, showSamples, showPowerAndEnergy },
+        phone: {...inference.phone, phone_model: ((phoneNames as any)[inference.phone.phone_model] ?? inference.phone.phone_model)}
     })
     )
 
