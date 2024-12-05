@@ -9,6 +9,7 @@ import useWindowWidth from "@/app/src/hooks/useWindowWidth"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from "react"
 
 const LARGE_SCREEN_THRESHOLD = 600
 
@@ -21,7 +22,11 @@ export default function NavBar() {
 
   const width = useWindowWidth()
 
-  const isIframe = window.self !== window.top;
+  const [isIframe, setIsIframe] = useState(false);
+
+  useEffect(() => {
+    setIsIframe(window.self !== window.top);
+  }, []);
 
   return (
     <nav className="sticky inset-x-0 top-0 z-50 bg-white shadow dark:bg-gray-950 w-fill">
