@@ -21,22 +21,28 @@ export default function NavBar() {
 
   const width = useWindowWidth()
 
+  const isIframe = window.self !== window.top;
+
   return (
     <nav className="sticky inset-x-0 top-0 z-50 bg-white shadow dark:bg-gray-950 w-fill">
       <div className="px-4 md:px-6">
         <div className="flex h-14 items-center justify-between">
           {
             width <= LARGE_SCREEN_THRESHOLD &&
-            <LinksSmallScreen/>
+            <LinksSmallScreen />
           }
-          <Link href="https://luxai.cin.ufpe.br/index.html" className="mr-auto flex items-center gap-2 text-lg font-semibold" prefetch={false}>
-            <Aperture className="w-5 h-5" />
-            <span>LuxAI</span>
-          </Link>
+            <a
+              href="https://luxai.cin.ufpe.br/index.html"
+              className="mr-auto flex items-center gap-2 text-lg font-semibold"
+              target={isIframe ? 'parent' : '_self'}
+            >
+              <Aperture className="w-5 h-5" />
+              <span>LuxAI</span>
+            </a>
           <nav className="ml-5 flex items-center space-x-4">
             {
               width > LARGE_SCREEN_THRESHOLD &&
-                <LinksLargeScreen />
+              <LinksLargeScreen />
             }
             <DarkModeToggle />
             <LanguageToggle />
