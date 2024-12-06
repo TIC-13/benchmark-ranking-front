@@ -39,7 +39,7 @@ export default function NavBar() {
             <a
               href="https://luxai.cin.ufpe.br/index.html"
               className="mr-auto flex items-center gap-2 text-lg font-semibold"
-              target={isIframe ? 'parent' : '_self'}
+              target={isIframe ? '_parent' : '_self'}
             >
               <Aperture className="w-5 h-5" />
               <span>LuxAI</span>
