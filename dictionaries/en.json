@@ -15,6 +15,10 @@
         "english": "English",
         "portuguese": "Portuguese"
     },
+    "tableControls": {
+        "previous": "Previous",
+        "next": "Next"
+    },
     "generalWarnings": {
         "atLeastOneSelected": "At least one value should be selected"
     },
