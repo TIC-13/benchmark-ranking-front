@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/custom/DataTable";
 import { DisplayMode, getColumns, isDisplayMode } from "./columns";
 import { TypographyH2 } from "@/components/typography/Typography";
 import MainContainer from "@/components/custom/MainContainer";

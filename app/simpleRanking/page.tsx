@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/custom/DataTable";
 import { getColumns } from "./columns";
 import { TypographyH2, TypographyP } from "@/components/typography/Typography";
 import useSimpleRanking from "./hooks/useSimpleRanking";
@@ -313,6 +313,7 @@ function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy
         <DataTable
             columns={getColumns(orderByEnergy ? "energy" : "speed")}
             data={data}
+            defaultSortId="CPU"
         />
     )
 }
