@@ -61,7 +61,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
         { value: "total", label: total },
         { value: "prefill", label: prefill },
         { value: "decode", label: decode },
-        { value: "cpu", label: cpu },
+        //{ value: "cpu", label: cpu },
         { value: "gpu", label: gpu },
         { value: "ram", label: ram }
     ]

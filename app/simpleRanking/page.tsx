@@ -93,7 +93,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     const radioOptions: RadioItem<DisplayModeVision>[] = [
         { value: "speed", label: speed},
-        { value: "cpu", label: cpu },
+        //{ value: "cpu", label: cpu },
         { value: "gpu", label: gpu },
         { value: "ram", label: ram }
     ]
