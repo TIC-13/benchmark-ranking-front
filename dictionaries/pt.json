@@ -82,15 +82,18 @@
         "title": "Ranking de LLMs",
         "description": "Esse ranking classifica smartphones Android pelos valores coletados no aplicativo Speed.AI LLM Version, que faz benchmarking de LLMs (Large Language Models, como Llama e Gemma) em aparelhos Android, usando a plataforma MLC LLM para a execução dos modelos.",
         "filters": {
-            "title": "Meus filtros",
+            "title": "Configurações do ranking",
             "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
             "mode": {
-                "total": "Total",
-                "prefill": "Prefill",
-                "decode": "Decode"
+                "total": "Tok/s (total)",
+                "prefill": "Tok/s (prefill)",
+                "decode": "Tok/s (decode)",
+                "cpu": "CPU",
+                "gpu": "GPU",
+                "ram": "RAM"
             },
             "toggles": {
-                "conversationNumber": "Mostrar número de conversas",
+                "conversationNumber": "Mostrar número de conversas do dispositivo",
                 "showPowerAndEnergy": "Mostrar potência e energia consumida",
                 "orderByPowerAndEnergy": "Ordenar por potência e energia"
             },

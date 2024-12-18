@@ -14,12 +14,15 @@ export type Inference = {
 type LLMResult = {
     prefill?: number,
     decode?: number,
-    power?: number,
     energy?: number,
     samples?: number,
+    gpu?: number,
+    cpu?: number,
+    ram?: number,
     showSamples: boolean,
-    showPowerAndEnergy: boolean,
 }
+
+type LLMResultNumerics = Omit<LLMResult, "showSamples">
 
 export type Phone = {
     id: number,
@@ -27,35 +30,75 @@ export type Phone = {
     phone_model: string
 }
 
-export type DisplayMode = "prefill" | "decode" | "total"
+export type DisplayMode = "prefill" | "decode" | "total" | "cpu" | "gpu" | "ram"
 
 export function isDisplayMode(mode: string): mode is DisplayMode {
-    return mode === "prefill" || mode === "decode" || mode === "total";
+    return (
+        mode === "prefill" ||
+        mode === "decode" ||
+        mode === "total" ||
+        mode === "cpu" ||
+        mode === "gpu" ||
+        mode === "ram"
+    );
 }
-
-type SortingMode = DisplayMode| "energy"
+function formatValue(value: number | undefined | null, unit: string): string {
+    return value !== undefined && value !== null ? `${value.toFixed(2)} ${unit}` : "-";
+  }
+  
+  function numericGetter(prop: keyof LLMResultNumerics): (v: LLMResultNumerics | null) => number | undefined {
+    return (v) => v?.[prop];
+  }
+  
+  const displayModeConfigs: Record<DisplayMode, {
+    getValue: (value: LLMResult | null) => number | undefined,
+    getDisplayValue: (value: LLMResult | null) => string
+  }> = {
+    prefill: {
+      getValue: numericGetter("prefill"),
+      getDisplayValue: (v) => formatValue(v?.prefill, "tok/s")
+    },
+    decode: {
+      getValue: numericGetter("decode"),
+      getDisplayValue: (v) => formatValue(v?.decode, "tok/s")
+    },
+    total: {
+      getValue: (v) => (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined,
+      getDisplayValue: (v) => {
+        const val = (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined;
+        return formatValue(val, "tok/s");
+      }
+    },
+    cpu: {
+      getValue: numericGetter("cpu"),
+      getDisplayValue: (v) => formatValue(v?.cpu, "%")
+    },
+    gpu: {
+      getValue: numericGetter("gpu"),
+      getDisplayValue: (v) => formatValue(v?.gpu, "%")
+    },
+    ram: {
+      getValue: numericGetter("ram"),
+      getDisplayValue: (v) => formatValue(v?.ram, "MB")
+    }
+  };
+  
+type SortingMode = DisplayMode
 
 const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
-    const maxValue = -99999999
-    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined ? number: maxValue 
+    
+    const sortStatus = rowA.getAllCells()
+        .find(cell => cell.column.id === columnId)
+        ?.column
+        .getIsSorted() ?? false
+    
+    const maxValue = -99999999 * (sortStatus === "asc"? -1: 1)
+    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined && number !== null ? number : maxValue 
 
     const getRowValue = (row: Row<Inference>) => {
-
         const value = row.getValue<LLMResult | null>(columnId)
-        const prefill = value?.prefill
-        const decode = value?.decode
-        const total = (prefill !== undefined && decode !== undefined)? prefill + decode: undefined
-
-        console.log(`rowValue col ID ${columnId}`, value)
-        if(mode === "prefill")
-            return maxIfDoesNotExist(prefill)
-        if(mode === "decode")
-            return maxIfDoesNotExist(decode)
-        if(mode === "total")
-            return maxIfDoesNotExist(total)
-        if(mode === "energy")
-            return maxIfDoesNotExist(value?.energy)
-        return value ? value.energy ?? maxValue: maxValue
+        const config = displayModeConfigs[mode]
+        return maxIfDoesNotExist(config.getValue(value))
     }
 
     const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
@@ -64,69 +107,44 @@ const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inf
     return rowAValue < rowBValue ? -1 : 1;
 }
 
-export const getColumns = (mode: DisplayMode, sortByEnergy: boolean = false): ColumnDef<Inference>[] => 
+export const getColumns = (mode: DisplayMode): ColumnDef<Inference>[] => 
     [
         {
             accessorKey: "phone",
             header: "Smartphone",
-    
             cell: ({ row }: { row: Row<Inference> }) =>
                 (row.getValue("phone") as Phone).phone_model,
-    
             enableSorting: true
         },
-        getColumnDef("result", mode, sortByEnergy),
+        getColumnDef("result", mode),
     ]
 
-function getColumnDef(rowName: string, mode: DisplayMode, sortByEnergy: boolean): ColumnDef<Inference> {
+function getColumnDef(rowName: string, mode: DisplayMode): ColumnDef<Inference> {
+    
     return {
         accessorKey: rowName,
         header: getHeader(),
         cell: getRowValue(rowName, mode),
-        sortingFn: getSortingFn(sortByEnergy ? "energy": mode),
+        sortingFn: getSortingFn(mode),
         enableSorting: true,
     }
 }
 
 function getRowValue(pickedRow: string, mode: DisplayMode) {
     return ({ row }: { row: Row<Inference> }) => {
-
         const { dictionary } = useDictionary()
-        const { llmRanking: dict} = dictionary
+        const { llmRanking: dict } = dictionary
 
         const value = row.getValue(pickedRow) as LLMResult | null
-        const { showSamples, showPowerAndEnergy } = value ?? { showSamples: true, showPowerAndEnergy: true }
-        
-        const invalidErrorMode = () => { throw Error("Invalid mode") }
-        
-        const prefill = value?.prefill
-        const decode = value?.decode
-        const total = (prefill !== undefined && decode !== undefined)? prefill + decode: undefined
+        const { showSamples } = value ?? { showSamples: true }
 
-        const toksRaw = 
-            mode === "decode"? 
-                decode: 
-            mode === "prefill"?
-                prefill:
-            mode === "total"?
-                total:
-                invalidErrorMode()
-
-        const toks = toksRaw ? `${toksRaw.toFixed(2)} tok/s` : "-"
+        const displayValue = displayModeConfigs[mode].getDisplayValue(value)
 
         const numSamples =
-            !showSamples ?
-                null :
-                value?.samples ?
-                    `${formatNumber(value.samples)} ${value.samples === 1 ? dict.table.conversation.singular : dict.table.conversation.plural}` :
-                    dict.table.unavailable.conversatiosnNumber
-
-        const power =
-            !showPowerAndEnergy ?
-                null :
-                (value?.power && value.energy) ?
-                    `⚡${value.power.toFixed(2)}W | ${value.energy?.toFixed(2)}J` :
-                    dict.table.unavailable.powerAndEnergy
+            !showSamples ? null :
+            value?.samples ?
+                `${formatNumber(value.samples)} ${value.samples === 1 ? dict.table.conversation.singular : dict.table.conversation.plural}` :
+                dict.table.unavailable.conversatiosnNumber
 
         return (
             <div className="flex flex-1 justify-center">
@@ -136,32 +154,21 @@ function getRowValue(pickedRow: string, mode: DisplayMode) {
                 >
                     {
                         value !== null ?
-
                             <div className="flex flex-col gap-y-1 w-100">
-                                <p className={`text-${numSamples !== null ? "base" : "base"}`}>{toks}</p>
-                                {
-                                    numSamples &&
-                                    <p className="text-xs">{numSamples}</p>
-                                }
-                                {
-                                    power &&
-                                   <p className="text-xs">{power}</p>
-                                }
+                                <p className={`text-${numSamples !== null ? "base" : "base"}`}>{displayValue}</p>
+                                { numSamples && <p className="text-xs">{numSamples}</p> }
                             </div>
                             : "-"
                     }
                 </Button>
             </div>
-
         )
     }
 }
 
 function getHeader() {
     return ({ column }: { column: Column<Inference> }) => {
-
         const { dictionary: dict } = useDictionary()
-
         const sortStatus = column.getIsSorted()
         const isSelected = sortStatus !== false
         const iconClass = "ml-2 h-4 w-4"
@@ -175,10 +182,8 @@ function getHeader() {
                     {dict.llmRanking.table.columns.result.header}
                     {
                         sortStatus !== false ?
-                            sortStatus === "asc" ?
-                                <ArrowDown className={iconClass} /> :
-                                <ArrowUp className={iconClass} /> :
-                            <ArrowUpDown className={iconClass} />
+                            (sortStatus === "asc" ? <ArrowDown className={iconClass} /> : <ArrowUp className={iconClass} />)
+                            : <ArrowUpDown className={iconClass} />
                     }
                 </Button>
             </div>
