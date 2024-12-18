@@ -3,15 +3,13 @@
 import React, { useState } from "react"
 
 import { DataTable } from "@/components/custom/DataTable";
-import { DisplayMode, getColumns, isDisplayMode } from "./columns";
+import { DisplayMode, getColumns } from "./columns";
 import { TypographyH2 } from "@/components/typography/Typography";
 import MainContainer from "@/components/custom/MainContainer";
 import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
 import DefaultCard from "@/components/custom/DefaultCard";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import useLLMRanking from "./hooks/useLLMRanking";
-import { DropdownMenuRadio } from "@/components/custom/DropdownRadio";
-import capitalize from "@/utils/capitalize";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
 import { Accordion } from "@/components/ui/accordion";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
@@ -20,8 +18,8 @@ import useLLMModels from "./hooks/useLLMModels";
 import { Selectable } from "@/components/custom/BadgePicker";
 import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
 import phoneNames from "@/app/src/utils/phone_names.json"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
+
 
 export default function DataQueryLayer() {
 
@@ -97,7 +95,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
                 subtitle=""
                 contentClassName="flex flex-col gap-y-10"
             >
-                <CustomRadioGroup<DisplayMode>
+                <RadioButtonsGroup<DisplayMode>
                     items={radioOptions}
                     setPickedItem={setMode}
                 />
@@ -150,34 +148,4 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
             />
         )
     }
-}
-
-
-type RadioItem<T extends string> = {
-    value: T,
-    label: string
-}
-
-type RadioGroupProps<T extends string> = {
-    items: RadioItem<T>[],
-    setPickedItem: (value: T) => void
-}
-
-function CustomRadioGroup<T extends string>({ items, setPickedItem }: RadioGroupProps<T>) {
-    return (
-        <RadioGroup
-            defaultValue={items[0].value}
-            onValueChange={(val) => setPickedItem(val as T)}
-            className="flex flex-1 flex-row justify-between items-center flex-wrap gap-y-5"
-        >
-            {
-                items.map(({ value, label }) =>
-                    <div key={value} className="flex items-center space-x-2">
-                        <RadioGroupItem value={value} id={value} />
-                        <Label htmlFor={value} className="w-20">{label}</Label>
-                    </div>
-                )
-            }
-        </RadioGroup>
-    )
 }

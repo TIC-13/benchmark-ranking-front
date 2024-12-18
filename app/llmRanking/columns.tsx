@@ -42,58 +42,59 @@ export function isDisplayMode(mode: string): mode is DisplayMode {
         mode === "ram"
     );
 }
+
 function formatValue(value: number | undefined | null, unit: string): string {
     return value !== undefined && value !== null ? `${value.toFixed(2)} ${unit}` : "-";
-  }
-  
-  function numericGetter(prop: keyof LLMResultNumerics): (v: LLMResultNumerics | null) => number | undefined {
+}
+
+function numericGetter(prop: keyof LLMResultNumerics): (v: LLMResultNumerics | null) => number | undefined {
     return (v) => v?.[prop];
-  }
-  
-  const displayModeConfigs: Record<DisplayMode, {
+}
+
+const displayModeConfigs: Record<DisplayMode, {
     getValue: (value: LLMResult | null) => number | undefined,
     getDisplayValue: (value: LLMResult | null) => string
-  }> = {
+}> = {
     prefill: {
-      getValue: numericGetter("prefill"),
-      getDisplayValue: (v) => formatValue(v?.prefill, "tok/s")
+        getValue: numericGetter("prefill"),
+        getDisplayValue: (v) => formatValue(v?.prefill, "tok/s")
     },
     decode: {
-      getValue: numericGetter("decode"),
-      getDisplayValue: (v) => formatValue(v?.decode, "tok/s")
+        getValue: numericGetter("decode"),
+        getDisplayValue: (v) => formatValue(v?.decode, "tok/s")
     },
     total: {
-      getValue: (v) => (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined,
-      getDisplayValue: (v) => {
-        const val = (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined;
-        return formatValue(val, "tok/s");
-      }
+        getValue: (v) => (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined,
+        getDisplayValue: (v) => {
+            const val = (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined;
+            return formatValue(val, "tok/s");
+        }
     },
     cpu: {
-      getValue: numericGetter("cpu"),
-      getDisplayValue: (v) => formatValue(v?.cpu, "%")
+        getValue: numericGetter("cpu"),
+        getDisplayValue: (v) => formatValue(v?.cpu, "%")
     },
     gpu: {
-      getValue: numericGetter("gpu"),
-      getDisplayValue: (v) => formatValue(v?.gpu, "%")
+        getValue: numericGetter("gpu"),
+        getDisplayValue: (v) => formatValue(v?.gpu, "%")
     },
     ram: {
-      getValue: numericGetter("ram"),
-      getDisplayValue: (v) => formatValue(v?.ram, "MB")
+        getValue: numericGetter("ram"),
+        getDisplayValue: (v) => formatValue(v?.ram, "MB")
     }
-  };
-  
+};
+
 type SortingMode = DisplayMode
 
 const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
-    
+
     const sortStatus = rowA.getAllCells()
         .find(cell => cell.column.id === columnId)
         ?.column
         .getIsSorted() ?? false
-    
-    const maxValue = -99999999 * (sortStatus === "asc"? -1: 1)
-    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined && number !== null ? number : maxValue 
+
+    const maxValue = -99999999 * (sortStatus === "asc" ? -1 : 1)
+    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined && number !== null && number !== 0 ? number : maxValue
 
     const getRowValue = (row: Row<Inference>) => {
         const value = row.getValue<LLMResult | null>(columnId)
@@ -107,7 +108,7 @@ const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inf
     return rowAValue < rowBValue ? -1 : 1;
 }
 
-export const getColumns = (mode: DisplayMode): ColumnDef<Inference>[] => 
+export const getColumns = (mode: DisplayMode): ColumnDef<Inference>[] =>
     [
         {
             accessorKey: "phone",
@@ -120,7 +121,7 @@ export const getColumns = (mode: DisplayMode): ColumnDef<Inference>[] =>
     ]
 
 function getColumnDef(rowName: string, mode: DisplayMode): ColumnDef<Inference> {
-    
+
     return {
         accessorKey: rowName,
         header: getHeader(),
@@ -142,9 +143,9 @@ function getRowValue(pickedRow: string, mode: DisplayMode) {
 
         const numSamples =
             !showSamples ? null :
-            value?.samples ?
-                `${formatNumber(value.samples)} ${value.samples === 1 ? dict.table.conversation.singular : dict.table.conversation.plural}` :
-                dict.table.unavailable.conversatiosnNumber
+                value?.samples ?
+                    `${formatNumber(value.samples)} ${value.samples === 1 ? dict.table.conversation.singular : dict.table.conversation.plural}` :
+                    dict.table.unavailable.conversatiosnNumber
 
         return (
             <div className="flex flex-1 justify-center">
@@ -156,7 +157,7 @@ function getRowValue(pickedRow: string, mode: DisplayMode) {
                         value !== null ?
                             <div className="flex flex-col gap-y-1 w-100">
                                 <p className={`text-${numSamples !== null ? "base" : "base"}`}>{displayValue}</p>
-                                { numSamples && <p className="text-xs">{numSamples}</p> }
+                                {numSamples && <p className="text-xs">{numSamples}</p>}
                             </div>
                             : "-"
                     }

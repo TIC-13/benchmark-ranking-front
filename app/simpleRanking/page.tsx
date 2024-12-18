@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 
 import { DataTable } from "@/components/custom/DataTable";
-import { getColumns } from "./columns";
+import { DisplayModeVision, getColumns } from "./columns";
 import { TypographyH2, TypographyP } from "@/components/typography/Typography";
 import useSimpleRanking from "./hooks/useSimpleRanking";
 import MainContainer from "@/components/custom/MainContainer";
@@ -25,6 +25,7 @@ import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import TextWarning from "@/components/custom/TextWarning";
 import BadgePicker, { Selectable } from "@/components/custom/BadgePicker";
 import phoneNames from "@/app/src/utils/phone_names.json"
+import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -37,9 +38,9 @@ export default function DataQueryLayer() {
     return (
         <PageLayer
             modelsList={modelsQuery.data.map(x => {
-                return { 
-                    value: x, 
-                    isSelected: true, 
+                return {
+                    value: x,
+                    isSelected: true,
                     tooltipContent: x.quantizations.join(", ")
                 }
             })}
@@ -73,7 +74,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
         { value: "SEGMENTATION", label: segmentation },
     ]
 
-    const CATEGORY_OTHER: Category = {value: "OTHER", label: other}
+    const CATEGORY_OTHER: Category = { value: "OTHER", label: other }
 
     const [models, setModels] = useState(modelsList)
     const [quantizations, setQuantizations] = useState(quantizationsList)
@@ -85,6 +86,17 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     const [showSamples, setShowSamples] = useState(false)
     const [showPowerAndEnergy, setShowPowerAndEnergy] = useState(false)
+
+    const [mode, setMode] = useState<DisplayModeVision>("speed")
+
+    const { speed, cpu, gpu, ram } = dict.filters.categories
+
+    const radioOptions: RadioItem<DisplayModeVision>[] = [
+        { value: "speed", label: speed},
+        { value: "cpu", label: cpu },
+        { value: "gpu", label: gpu },
+        { value: "ram", label: ram }
+    ]
 
     const [orderByEnergy, setOrderByEnergy] = useState(false)
 
@@ -134,6 +146,10 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 contentClassName="flex flex-col gap-y-5"
             >
                 <Accordion type="multiple" className="max-w-l">
+                    <RadioButtonsGroup<DisplayModeVision>
+                        items={radioOptions}
+                        setPickedItem={setMode}
+                    />
                     <DefaultAccordionItem
                         value="modelos"
                         triggerLabel={dict.filters.models.label}
@@ -173,7 +189,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     getItemName={(item) => item.value}
                     noLessThanOneSelected={true}
                 />
-                <Separator/>
+                <Separator />
                 <SwitchWithLabel
                     label={dict.filters.toggles.inferenceNumber}
                     checked={showSamples}
@@ -202,6 +218,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 <InvalidModelsAlert />
             }
             <Ranking
+                mode={mode}
                 models={modelsToFetch}
                 quantizations={quantizationsToFetch}
                 showSamples={showSamples}
@@ -281,13 +298,14 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
 type RankingLayerProps = {
     models: Selectable<Model>[],
+    mode: DisplayModeVision,
     quantizations: Selectable<string>[],
     showSamples?: boolean,
     showPowerAndEnergy?: boolean,
     orderByEnergy?: boolean
 }
 
-function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy = true, orderByEnergy = false }: RankingLayerProps) {
+function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy = true, orderByEnergy = false, mode }: RankingLayerProps) {
 
     const rankingQuery = useSimpleRanking(
         models.filter(x => x.isSelected)
@@ -305,13 +323,13 @@ function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy
         CPU: { ...inference.CPU, showSamples, showPowerAndEnergy },
         GPU: { ...inference.GPU, showSamples, showPowerAndEnergy },
         NNAPI: { ...inference.NNAPI, showSamples, showPowerAndEnergy },
-        phone: {...inference.phone, phone_model: ((phoneNames as any)[inference.phone.phone_model] ?? inference.phone.phone_model)}
+        phone: { ...inference.phone, phone_model: ((phoneNames as any)[inference.phone.phone_model] ?? inference.phone.phone_model) }
     })
     )
 
     return (
         <DataTable
-            columns={getColumns(orderByEnergy ? "energy" : "speed")}
+            columns={getColumns(mode)}
             data={data}
             defaultSortId="CPU"
         />

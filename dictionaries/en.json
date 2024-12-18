@@ -22,6 +22,9 @@
     "generalWarnings": {
         "atLeastOneSelected": "At least one value should be selected"
     },
+    "actions": {
+        "runningOn": "Running on"
+    },
     "visionRanking": {
         "title": "Vision Model Ranking",
         "description": "This ranking classifies Android smartphones based on the data collected by the Speed.AI app, which benchmarks AI models natively on Android devices.",
@@ -38,6 +41,12 @@
         "filters": {
             "title": "My Filters",
             "subtitle": "Select models and quantizations to be used for calculating the results",
+            "categories": {
+                "speed": "Speed (ms)",
+                "cpu": "CPU (%)",
+                "gpu": "GPU (%)",
+                "ram": "RAM (MB)"
+            },
             "models": {
                 "label": "Models",
                 "types": {
@@ -68,6 +77,7 @@
             "notSupported": "Models not supported"
         },
         "table": {
+
             "inference": {
                 "singular": "inference",
                 "plural": "inferences"

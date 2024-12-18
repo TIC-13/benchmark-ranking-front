@@ -22,6 +22,9 @@
     "generalWarnings": {
         "atLeastOneSelected": "Pelo menos um valor deve ser selecionado"
     },
+    "actions": {
+        "runningOn": "Executando na"
+    },
     "visionRanking": {
         "title": "Ranking de modelos de visão",
         "description": "Esse ranking classifica smartphones Android pelos valores coletados no aplicativo Speed.AI, que faz benchmarking de modelos de inteligência artificial nativamente em aparelhos Android.",
@@ -38,6 +41,12 @@
         "filters": {
             "title": "Meus filtros",
             "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
+            "categories": {
+                "speed": "Velocidade (ms)",
+                "cpu": "CPU (%)",
+                "gpu": "GPU (%)",
+                "ram": "RAM (MB)"
+            },
             "models": {
                 "label": "Modelos",
                 "types": {

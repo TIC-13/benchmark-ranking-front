@@ -18,6 +18,9 @@ type Result = {
     samples?: number,
     power?: number,
     energy?: number,
+    cpu?: number,
+    gpu?: number,
+    ram?: number,
     showSamples: boolean,
     showPowerAndEnergy: boolean
 }
@@ -28,25 +31,55 @@ export type Phone = {
     phone_model: string
 }
 
-type SortingMode = "speed" | "energy"
+export type DisplayModeVision = "speed" | "cpu" | "gpu" | "ram"
 
-const getSortingFn = (mode: SortingMode = "speed") => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
-    const maxValue = 99999999
+const displayModes: Record<DisplayModeVision, {
+    getValue: (result: Result) => number | undefined, 
+    getDisplayValue: (result: Result) => string
+}> = {
+    speed: { 
+        getValue: ({speed}) => speed,
+        getDisplayValue: ({speed}) => speed? `${speed} ms` : "-"
+    },
+    cpu: {
+        getValue: ({cpu}) => cpu,
+        getDisplayValue: ({cpu}) => cpu? `${cpu}%`: "-"
+    },
+    gpu: {
+        getValue: ({gpu}) => gpu,
+        getDisplayValue: ({gpu}) => gpu? `${gpu}%`: "-"
+    },
+    ram: {
+        getValue: ({ram}) => ram,
+        getDisplayValue: ({ram}) => ram? `${ram} MB`: "-"
+    }
+}
+
+const getSortingFn = (mode: DisplayModeVision = "speed") => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
+
+    const sortStatus = rowA.getAllCells()
+        .find(cell => cell.column.id === columnId)
+        ?.column
+        .getIsSorted() ?? false
+
+    const maxValue = -99999999 * (sortStatus === "asc" ? -1 : 1)
+    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined && number !== null && number !== 0? number : maxValue
 
     const getRowValue = (row: Row<Inference>) => {
         const value = row.getValue<Result | null>(columnId)
-        if(mode === "speed")
-            return value ? value.speed ?? maxValue : maxValue
-        return value ? value.energy ?? maxValue: maxValue
+        const config = displayModes[mode]
+        return maxIfDoesNotExist(value !== null && value !== undefined? config.getValue(value): undefined)
     }
 
     const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
 
+    console.log(rowAValue, rowBValue)
+
     if (rowAValue === rowBValue) return 0;
-    return rowAValue < rowBValue ? 1 : -1;
+    return rowAValue < rowBValue ? -1 : 1;
 }
 
-export const getColumns = (mode: SortingMode = "speed"): ColumnDef<Inference>[] => 
+export const getColumns = (mode: DisplayModeVision = "speed"): ColumnDef<Inference>[] => 
     [
         {
             accessorKey: "phone",
@@ -62,25 +95,25 @@ export const getColumns = (mode: SortingMode = "speed"): ColumnDef<Inference>[] 
         getColumnDef("NNAPI", mode)
     ]
 
-function getColumnDef(rowName: string, mode: SortingMode = "speed"): ColumnDef<Inference> {
+function getColumnDef(rowName: string, mode: DisplayModeVision = "speed"): ColumnDef<Inference> {
     return {
         accessorKey: rowName,
         header: getHeader(rowName),
-        cell: getRowValue(rowName),
+        cell: getRowValue(rowName, mode),
         sortingFn: getSortingFn(mode),
         enableSorting: true,
     }
 }
 
-function getRowValue(pickedRow: string) {
+function getRowValue(pickedRow: string, mode: DisplayModeVision) {
     return ({ row }: { row: Row<Inference> }) => {
 
         const { dictionary } = useDictionary()
         const {visionRanking: dict} = dictionary
 
         const value = row.getValue(pickedRow) as Result | null
-        const { showSamples, showPowerAndEnergy } = value ?? { showSamples: true, showPowerAndEnergy: true }
-        const speed = value?.speed ? `${value.speed} ms` : "-"
+        const { showSamples } = value ?? { showSamples: true, showPowerAndEnergy: true }
+        const displayValue = value? displayModes[mode].getDisplayValue(value): "-"
 
         const numSamples =
             !showSamples ?
@@ -88,13 +121,6 @@ function getRowValue(pickedRow: string) {
                 value?.samples ?
                     `${formatNumber(value.samples)} ${value.samples === 1 ? dict.table.inference.singular : dict.table.inference.plural}` :
                     dict.table.unavailable.inferencesNumber
-
-        const power =
-            !showPowerAndEnergy ?
-                null :
-                (value?.power && value.energy) ?
-                    `⚡${value.power.toFixed(2)}W | ${value.energy?.toFixed(2)}J` :
-                    dict.table.unavailable.powerAndEnergy
 
         return (
             <div className="flex flex-1 justify-center">
@@ -106,14 +132,10 @@ function getRowValue(pickedRow: string) {
                         value !== null ?
 
                             <div className="flex flex-col gap-y-1 w-100">
-                                <p className={`text-${numSamples !== null ? "base" : "base"}`}>{speed}</p>
+                                <p className={`text-${numSamples !== null ? "base" : "base"}`}>{displayValue}</p>
                                 {
                                     numSamples &&
                                     <p className="text-xs">{numSamples}</p>
-                                }
-                                {
-                                    power &&
-                                   <p className="text-xs">{power}</p>
                                 }
                             </div>
                             : "-"
@@ -128,6 +150,8 @@ function getRowValue(pickedRow: string) {
 function getHeader(label: string) {
     return ({ column }: { column: Column<Inference> }) => {
 
+        const dict = useDictionary()
+
         const sortStatus = column.getIsSorted()
         const isSelected = sortStatus !== false
         const iconClass = "ml-2 h-4 w-4"
@@ -136,10 +160,9 @@ function getHeader(label: string) {
             <div className="flex flex-1 justify-center">
                 <Button
                     variant={isSelected ? "default" : "ghost"}
-                    //className={`bg-${colors.background} text-${colors.foreground}`}
                     onClick={() => column.toggleSorting(sortStatus === "asc")}
                 >
-                    {label}
+                    {`${dict.dictionary.actions.runningOn} ${label}`}
                     {
                         sortStatus !== false ?
                             sortStatus === "asc" ?
