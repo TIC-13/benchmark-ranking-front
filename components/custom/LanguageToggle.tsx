@@ -11,11 +11,23 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useDictionary } from "../providers/DictionaryProvider"
+import { Language } from "@/app/dictionaries"
 
 export function LanguageToggle({ className }: { className?: string }) {
 
-    const { dictionary, language, setLanguage } = useDictionary()
+    const { dictionary, language, updateLanguage } = useDictionary()
     const { english, portuguese } = dictionary.languageToggle
+
+    const LANGUAGE_LABELS: Record<Language, string> = {
+        en: english,
+        pt: portuguese,
+    }
+
+    const languages: { label: string; value: Language }[] =
+        Object.entries(LANGUAGE_LABELS).map(([value, label]) => ({
+            label,
+            value: value as Language
+        }))
 
     return (
         <DropdownMenu>
@@ -27,12 +39,16 @@ export function LanguageToggle({ className }: { className?: string }) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setLanguage("en")} aria-selected={language == "en"}>
-                    {english}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("pt")} aria-selected={language == "pt"}>
-                    {portuguese}
-                </DropdownMenuItem>
+                {
+                    languages.map(({ label, value }) =>
+                        <DropdownMenuItem
+                            onClick={() => updateLanguage(value)}
+                            aria-selected={language == value}
+                        >
+                            {label}
+                        </DropdownMenuItem>
+                    )
+                }
             </DropdownMenuContent>
         </DropdownMenu>
     )
