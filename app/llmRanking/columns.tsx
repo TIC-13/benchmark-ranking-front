@@ -53,59 +53,67 @@ function numericGetter(prop: keyof LLMResultNumerics): (v: LLMResultNumerics | n
 
 const displayModeConfigs: Record<DisplayMode, {
     getValue: (value: LLMResult | null) => number | undefined,
-    getDisplayValue: (value: LLMResult | null) => string
+    getDisplayValue: (value: LLMResult | null) => string,
+    sortMode: "asc" | "desc"
 }> = {
     prefill: {
         getValue: numericGetter("prefill"),
-        getDisplayValue: (v) => formatValue(v?.prefill, "tok/s")
+        getDisplayValue: (v) => formatValue(v?.prefill, "tok/s"),
+        sortMode: "desc"
     },
     decode: {
         getValue: numericGetter("decode"),
-        getDisplayValue: (v) => formatValue(v?.decode, "tok/s")
+        getDisplayValue: (v) => formatValue(v?.decode, "tok/s"),
+        sortMode: "desc"
     },
     total: {
         getValue: (v) => (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined,
         getDisplayValue: (v) => {
             const val = (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined;
             return formatValue(val, "tok/s");
-        }
+        },
+        sortMode: "desc"
     },
     cpu: {
         getValue: numericGetter("cpu"),
-        getDisplayValue: (v) => formatValue(v?.cpu, "%")
+        getDisplayValue: (v) => formatValue(v?.cpu, "%"),
+        sortMode: "asc"
     },
     gpu: {
         getValue: numericGetter("gpu"),
-        getDisplayValue: (v) => formatValue(v?.gpu, "%")
+        getDisplayValue: (v) => formatValue(v?.gpu, "%"),
+        sortMode: "asc"
     },
     ram: {
         getValue: numericGetter("ram"),
-        getDisplayValue: (v) => formatValue(v?.ram, "MB")
+        getDisplayValue: (v) => formatValue(v?.ram, "MB"),
+        sortMode: "asc"
     }
 };
 
-type SortingMode = DisplayMode
+const getSortingFn = (mode: DisplayMode) => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
 
-const getSortingFn = (mode: SortingMode) => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
+    const config = displayModeConfigs[mode]
+    const isAsc = config.sortMode === "asc"
+    const isAscMultiplier = isAsc? -1: 1
 
     const sortStatus = rowA.getAllCells()
         .find(cell => cell.column.id === columnId)
         ?.column
         .getIsSorted() ?? false
 
-    const maxValue = -99999999 * (sortStatus === "asc" ? -1 : 1)
-    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined && number !== null && number !== 0 ? number : maxValue
+    const maxValue = -99999999 * (sortStatus === "asc" ? -1 : 1) * isAscMultiplier
+    const maxIfDoesNotExist = (number: number | undefined) => number !== undefined && number !== null && number !== 0? number : maxValue
 
     const getRowValue = (row: Row<Inference>) => {
         const value = row.getValue<LLMResult | null>(columnId)
-        const config = displayModeConfigs[mode]
-        return maxIfDoesNotExist(config.getValue(value))
+        return maxIfDoesNotExist(value !== null && value !== undefined? config.getValue(value): undefined)
     }
 
     const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
 
     if (rowAValue === rowBValue) return 0;
-    return rowAValue < rowBValue ? -1 : 1;
+    return (rowAValue < rowBValue ? -1 : 1)*isAscMultiplier;
 }
 
 export const getColumns = (mode: DisplayMode): ColumnDef<Inference>[] =>

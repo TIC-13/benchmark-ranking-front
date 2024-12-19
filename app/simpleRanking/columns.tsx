@@ -29,49 +29,58 @@ export type Phone = {
 }
 
 export type DisplayModeVision = "speed" | "cpu" | "gpu" | "ram"
+type SortMode = "asc" | "desc"
 
 const displayModes: Record<DisplayModeVision, {
     getValue: (result: Result) => number | undefined, 
-    getDisplayValue: (result: Result) => string
+    getDisplayValue: (result: Result) => string,
+    sortMode: SortMode
 }> = {
     speed: { 
         getValue: ({speed}) => speed,
-        getDisplayValue: ({speed}) => speed? `${speed} ms` : "-"
+        getDisplayValue: ({speed}) => speed? `${speed} ms` : "-",
+        sortMode: "asc"
     },
     cpu: {
         getValue: ({cpu}) => cpu,
-        getDisplayValue: ({cpu}) => cpu? `${cpu}%`: "-"
+        getDisplayValue: ({cpu}) => cpu? `${cpu}%`: "-",
+        sortMode: "asc"
     },
     gpu: {
         getValue: ({gpu}) => gpu,
-        getDisplayValue: ({gpu}) => gpu? `${gpu}%`: "-"
+        getDisplayValue: ({gpu}) => gpu? `${gpu}%`: "-",
+        sortMode: "asc"
     },
     ram: {
         getValue: ({ram}) => ram,
-        getDisplayValue: ({ram}) => ram? `${ram} MB`: "-"
+        getDisplayValue: ({ram}) => ram? `${ram} MB`: "-",
+        sortMode: "asc"
     }
 }
 
 const getSortingFn = (mode: DisplayModeVision = "speed") => (rowA: Row<Inference>, rowB: Row<Inference>, columnId: string) => {
+
+    const config = displayModes[mode]
+    const isAsc = config.sortMode === "asc"
+    const isAscMultiplier = isAsc? -1: 1
 
     const sortStatus = rowA.getAllCells()
         .find(cell => cell.column.id === columnId)
         ?.column
         .getIsSorted() ?? false
 
-    const maxValue = -99999999 * (sortStatus === "asc" ? -1 : 1)
+    const maxValue = -99999999 * (sortStatus === "asc" ? -1 : 1) * isAscMultiplier
     const maxIfDoesNotExist = (number: number | undefined) => number !== undefined && number !== null && number !== 0? number : maxValue
 
     const getRowValue = (row: Row<Inference>) => {
         const value = row.getValue<Result | null>(columnId)
-        const config = displayModes[mode]
         return maxIfDoesNotExist(value !== null && value !== undefined? config.getValue(value): undefined)
     }
 
     const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
 
     if (rowAValue === rowBValue) return 0;
-    return rowAValue < rowBValue ? -1 : 1;
+    return (rowAValue < rowBValue ? -1 : 1)*isAscMultiplier;
 }
 
 export const getColumns = (mode: DisplayModeVision = "speed"): ColumnDef<Inference>[] => 
