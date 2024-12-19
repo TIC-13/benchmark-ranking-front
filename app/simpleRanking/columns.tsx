@@ -16,13 +16,10 @@ export type Inference = {
 type Result = {
     speed?: number,
     samples?: number,
-    power?: number,
-    energy?: number,
     cpu?: number,
     gpu?: number,
     ram?: number,
     showSamples: boolean,
-    showPowerAndEnergy: boolean
 }
 
 export type Phone = {
@@ -72,8 +69,6 @@ const getSortingFn = (mode: DisplayModeVision = "speed") => (rowA: Row<Inference
     }
 
     const [rowAValue, rowBValue] = [getRowValue(rowA), getRowValue(rowB)]
-
-    console.log(rowAValue, rowBValue)
 
     if (rowAValue === rowBValue) return 0;
     return rowAValue < rowBValue ? -1 : 1;

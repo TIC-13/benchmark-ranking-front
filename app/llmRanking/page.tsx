@@ -15,7 +15,7 @@ import { Accordion } from "@/components/ui/accordion";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { InfoIcon } from "lucide-react";
 import useLLMModels from "./hooks/useLLMModels";
-import { Selectable } from "@/components/custom/BadgePicker";
+import { getSelectedValues, Selectable } from "@/components/custom/BadgePicker";
 import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
 import phoneNames from "@/app/src/utils/phone_names.json"
 import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
@@ -115,7 +115,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
             </DefaultCard>
             <span className="flex items-center gap-x-3 font-light"><InfoIcon />{dict.phoneAlert}</span>
             <Ranking
-                models={models.filter(x => x.isSelected).map(x => x.value)}
+                models={getSelectedValues(models)}
                 mode={mode}
                 showSamples={showSamples}
             />

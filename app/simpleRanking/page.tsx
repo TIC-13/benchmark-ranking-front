@@ -23,7 +23,7 @@ import { Separator } from "@/components/custom/Separator";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
 import TextWarning from "@/components/custom/TextWarning";
-import BadgePicker, { Selectable } from "@/components/custom/BadgePicker";
+import BadgePicker, { getSelectedValues, Selectable } from "@/components/custom/BadgePicker";
 import phoneNames from "@/app/src/utils/phone_names.json"
 import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
 
@@ -78,15 +78,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
 
     const [models, setModels] = useState(modelsList)
     const [quantizations, setQuantizations] = useState(quantizationsList)
-
-    const [modelsToFetch, setModelsToFetch] = useState(modelsList)
-    const [quantizationsToFetch, setQuantizationsToFetch] = useState(quantizationsList)
-
-    const [invalidModelsQuantizations, setInvalidModelsQuantizations] = useState(getInvalidModelsQuantizations())
-
     const [showSamples, setShowSamples] = useState(false)
-    const [showPowerAndEnergy, setShowPowerAndEnergy] = useState(false)
-
     const [mode, setMode] = useState<DisplayModeVision>("speed")
 
     const { speed, cpu, gpu, ram } = dict.filters.categories
@@ -98,23 +90,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
         { value: "ram", label: ram }
     ]
 
-    const [orderByEnergy, setOrderByEnergy] = useState(false)
-
-    const refreshPending =
-        !arraysOfSelectableEquals(models, modelsToFetch) ||
-        !arraysOfSelectableEquals(quantizations, quantizationsToFetch)
-
-    const onRefetch = () => {
-        setModelsToFetch(models)
-        setQuantizationsToFetch(quantizations)
-    }
-
-    useEffect(() => {
-        setInvalidModelsQuantizations(getInvalidModelsQuantizations())
-    }, [modelsToFetch, quantizationsToFetch])
-
-
-    const { items, setItems, addItem, removeItem } = useAccordionBadgePicker([...CATEGORIES, CATEGORY_OTHER])
+    const { items, setItems } = useAccordionBadgePicker([...CATEGORIES, CATEGORY_OTHER])
 
     return (
         <MainContainer>
@@ -195,149 +171,51 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     checked={showSamples}
                     onCheckedChange={setShowSamples}
                 />
-                <Separator />
-                <div className="flex flex-row flex-wrap gap-x-10 gap-y-5">
-                    <SwitchWithLabel
-                        label={dict.filters.toggles.showPowerAndEnergy}
-                        checked={showPowerAndEnergy}
-                        onCheckedChange={setShowPowerAndEnergy}
-                    />
-                    {
-                        showPowerAndEnergy &&
-                        <SwitchWithLabel
-                            label={dict.filters.toggles.orderByPowerAndEnergy}
-                            checked={orderByEnergy}
-                            onCheckedChange={setOrderByEnergy}
-                        />
-                    }
-                </div>
-                <ApplyFilterButton />
             </DefaultCard>
-            {
-                invalidModelsQuantizations.length > 0 &&
-                <InvalidModelsAlert />
-            }
             <Ranking
                 mode={mode}
-                models={modelsToFetch}
-                quantizations={quantizationsToFetch}
+                models={getSelectedValues(models).map(val => val.ml_model)}
+                quantizations={getSelectedValues(quantizations)}
                 showSamples={showSamples}
-                showPowerAndEnergy={showPowerAndEnergy}
-                orderByEnergy={showPowerAndEnergy && orderByEnergy}
             />
         </MainContainer>
     )
-
-    function ApplyFilterButton() {
-        return (
-            <div className="flex flex-row gap-x-5 items-center">
-                <Button
-                    onClick={onRefetch}
-                    className="max-w-xs"
-                    variant="default"
-                >
-                    {dict.filters.buttons.apply}
-                </Button>
-                {
-                    refreshPending &&
-                    <TextWarning text={dict.filters.warnings.changesNotSaved} />
-                }
-            </div>
-        )
-    }
-
-    function InvalidModelsAlert() {
-        return (
-            <>
-                {
-                    invalidModelsQuantizations.length > 0 &&
-                    <AccordionInCard
-                        label={dict.alert.label}
-                        classNameOuterCard="border-warning-foreground"
-                        labelClassName="text-warning-foreground font-bold"
-                        contentClassName="flex flex-col gap-y-2"
-                    >
-                        {
-                            invalidModelsQuantizations.map(quant =>
-                                <DefaultCard
-                                    title={quant.quantization}
-                                    subtitle={dict.alert.notSupported}
-                                    className="flex flex-row items-center bg-secondary"
-                                    titleClassName="text-lg"
-                                    contentClassName="flex flex-wrap p-0 justify-center gap-x-2 gap-y-2"
-                                >
-                                    {
-                                        quant.models.map(model =>
-                                            <Badge>{model.ml_model}</Badge>
-                                        )
-                                    }
-                                </DefaultCard>
-                            )
-                        }
-                    </AccordionInCard>
-                }
-            </>
-        )
-    }
-
-    function getInvalidModelsQuantizations() {
-
-        const byQuant = quantizationsToFetch
-            .filter(quant => quant.isSelected)
-            .map(quant => {
-                return {
-                    quantization: quant.value,
-                    models: modelsToFetch.filter(model =>
-                        model.isSelected && !model.value.quantizations.includes(quant.value)
-                    ).map(model => model.value)
-                }
-            })
-        return byQuant
-    }
 }
 
 type RankingLayerProps = {
-    models: Selectable<Model>[],
+    models: string[],
     mode: DisplayModeVision,
-    quantizations: Selectable<string>[],
+    quantizations: string[],
     showSamples?: boolean,
     showPowerAndEnergy?: boolean,
     orderByEnergy?: boolean
 }
 
-function Ranking({ models, quantizations, showSamples = true, showPowerAndEnergy = true, orderByEnergy = false, mode }: RankingLayerProps) {
+function Ranking({ models, quantizations, showSamples = true, mode }: RankingLayerProps) {
 
     const rankingQuery = useSimpleRanking(
-        models.filter(x => x.isSelected)
-            .map(x => x.value.ml_model),
-        quantizations.filter(x => x.isSelected)
-            .map(x => x.value),
+        models,
+        quantizations,
     )
 
-    if (rankingQuery.isLoading || rankingQuery.data === undefined)
-        return <LoadingFullScreen />
-
-    let data = rankingQuery.data.map(inference =>
+    let data = rankingQuery.data?.map(inference =>
     ({
         ...inference,
-        CPU: { ...inference.CPU, showSamples, showPowerAndEnergy },
-        GPU: { ...inference.GPU, showSamples, showPowerAndEnergy },
-        NNAPI: { ...inference.NNAPI, showSamples, showPowerAndEnergy },
+        CPU: { ...inference.CPU, showSamples },
+        GPU: { ...inference.GPU, showSamples },
+        NNAPI: { ...inference.NNAPI, showSamples },
         phone: { ...inference.phone, phone_model: ((phoneNames as any)[inference.phone.phone_model] ?? inference.phone.phone_model) }
     })
-    )
+    ) ?? []
 
     return (
         <DataTable
             columns={getColumns(mode)}
             data={data}
             defaultSortId="CPU"
+            isLoading={rankingQuery.isLoading || rankingQuery.data === undefined}
         />
     )
-}
-
-function arraysOfSelectableEquals(a: Selectable<any>[], b: Selectable<any>[]) {
-    return JSON.stringify(a) === JSON.stringify(b)
 }
 
 

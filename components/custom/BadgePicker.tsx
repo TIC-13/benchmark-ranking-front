@@ -16,6 +16,12 @@ export interface Selectable<T> {
     tooltipContent?: string
 }
 
+export function getSelectedValues<T>(selectables: Selectable<T>[]) {
+    return selectables
+        .filter(x => x.isSelected)
+        .map(x => x.value)
+}
+
 export type BadgePickerProps<T> = {
     data: Selectable<T>[],
     setData: React.Dispatch<React.SetStateAction<Selectable<T>[]>>,
