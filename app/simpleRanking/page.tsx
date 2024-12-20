@@ -213,7 +213,7 @@ function Ranking({ models, quantizations, showSamples = true, mode }: RankingLay
             columns={getColumns(mode)}
             data={data}
             defaultSortId="CPU"
-            isLoading={rankingQuery.isLoading || rankingQuery.data === undefined}
+            isLoading={rankingQuery.isLoading || rankingQuery.isRefetching}
         />
     )
 }
