@@ -97,9 +97,9 @@
                 "total": "Tok/s (total)",
                 "prefill": "Tok/s (prefill)",
                 "decode": "Tok/s (decode)",
-                "cpu": "CPU",
-                "gpu": "GPU",
-                "ram": "RAM"
+                "cpu": "CPU (%)",
+                "gpu": "GPU (%)",
+                "ram": "RAM (MB)"
             },
             "toggles": {
                 "conversationNumber": "Mostrar número de conversas do dispositivo",
