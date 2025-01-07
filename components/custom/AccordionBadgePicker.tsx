@@ -7,7 +7,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Switch } from "@/components/ui/switch"
-import { Category } from "@/app/simpleRanking/page";
+import { Category } from "@/app/visionRanking/page";
 import { BadgePickerContent, BadgePickerProps } from "./BadgePicker";
 
 type AccordionBadgeSelectorProps<T> = BadgePickerProps<T>

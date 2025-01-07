@@ -61,7 +61,7 @@ export default function NavBar() {
     return (
       <>
         <PageLink
-          href="/simpleRanking"
+          href="/visionRanking"
           text={dict.links.visionRanking}
         />
         <PageLink
@@ -87,7 +87,7 @@ export default function NavBar() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => router.push("/simpleRanking")}>
+          <DropdownMenuItem onClick={() => router.push("/visionRanking")}>
             {dict.links.visionRanking}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/llmRanking")}>
