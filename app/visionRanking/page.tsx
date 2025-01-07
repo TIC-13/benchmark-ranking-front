@@ -82,7 +82,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
     const { speed, cpu, gpu, ram } = dict.filters.categories
 
     const radioOptions: RadioItem<DisplayModeVision>[] = [
-        { value: "speed", label: speed},
+        { value: "speed", label: speed },
         //{ value: "cpu", label: cpu },
         { value: "gpu", label: gpu },
         { value: "ram", label: ram }
@@ -119,11 +119,11 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 subtitle={dict.filters.subtitle}
                 contentClassName="flex flex-col gap-y-5"
             >
+                <RadioButtonsGroup<DisplayModeVision>
+                    items={radioOptions}
+                    setPickedItem={setMode}
+                />
                 <Accordion type="multiple" className="max-w-l">
-                    <RadioButtonsGroup<DisplayModeVision>
-                        items={radioOptions}
-                        setPickedItem={setMode}
-                    />
                     <DefaultAccordionItem
                         value="modelos"
                         triggerLabel={dict.filters.models.label}
