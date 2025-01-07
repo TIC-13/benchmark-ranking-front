@@ -39,7 +39,7 @@
             ]
         },
         "filters": {
-            "title": "My Filters",
+            "title": "Ranking settings",
             "subtitle": "Select models and quantizations to be used for calculating the results",
             "categories": {
                 "speed": "Inference time (ms)",

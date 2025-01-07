@@ -11,7 +11,7 @@ import { ReactNode } from "react"
 type CardProps = {
     children: ReactNode,
     title: string,
-    subtitle: string,
+    subtitle?: string,
     className?: string,
     titleClassName?: string
     contentClassName?: string
@@ -22,7 +22,10 @@ export default function DefaultCard({ children, title, subtitle, className, cont
         <Card className={className}>
             <CardHeader>
                 <CardTitle className={titleClassName}>{title}</CardTitle>
-                <CardDescription>{subtitle}</CardDescription>
+                {
+                    subtitle !== undefined &&
+                    <CardDescription>{subtitle}</CardDescription>
+                }
             </CardHeader>
             <CardContent className={contentClassName}>
                 {children}

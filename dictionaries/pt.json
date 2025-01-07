@@ -39,7 +39,7 @@
             ]
         },
         "filters": {
-            "title": "Meus filtros",
+            "title": "Configurações do ranking",
             "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
             "categories": {
                 "speed": "Tempo de inferência (ms)",

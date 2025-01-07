@@ -17,7 +17,7 @@ type DefaultAccordionItemProps = {
 export default function DefaultAccordionItem({value, triggerLabel, className, contentClassName, children}: DefaultAccordionItemProps) {
     return (
         <AccordionItem value={value} className={className}>
-            <AccordionTrigger>{triggerLabel}</AccordionTrigger>
+            <AccordionTrigger className="text-left">{triggerLabel}</AccordionTrigger>
             <AccordionContent className={cn("pl-5", contentClassName)}>
                 {children}
             </AccordionContent>

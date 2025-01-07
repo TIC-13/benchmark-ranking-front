@@ -24,6 +24,7 @@ import TextWarning from "@/components/custom/TextWarning";
 import BadgePicker, { getSelectedValues, Selectable } from "@/components/custom/BadgePicker";
 import phoneNames from "@/app/src/utils/phone_names.json"
 import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
+import WrapSeparatorBottom from "@/components/custom/WrapSeparatorBottom";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -95,7 +96,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text={dict.title} />
             </div>
-            <p className="max-w-2xl">{dict.description}</p>
+            <p>{dict.description}</p>
             <Accordion type="multiple">
                 <DefaultAccordionItem
                     value="help"
@@ -116,13 +117,14 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             </Accordion>
             <DefaultCard
                 title={dict.filters.title}
-                subtitle={dict.filters.subtitle}
                 contentClassName="flex flex-col gap-y-5"
             >
-                <RadioButtonsGroup<DisplayModeVision>
-                    items={radioOptions}
-                    setPickedItem={setMode}
-                />
+                <WrapSeparatorBottom>
+                    <RadioButtonsGroup<DisplayModeVision>
+                        items={radioOptions}
+                        setPickedItem={setMode}
+                    />
+                </WrapSeparatorBottom>
                 <Accordion type="multiple" className="max-w-l">
                     <DefaultAccordionItem
                         value="modelos"
@@ -134,8 +136,9 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                             onValueChange={setItems}
                         >
                             {
-                                CATEGORIES.map(category =>
+                                CATEGORIES.map((category, index) =>
                                     <AccordionBadgePicker<Model>
+                                        className={index === 0 ? "mt-0" : "mt-2"}
                                         data={models}
                                         setData={setModels}
                                         title={category.label}
@@ -145,6 +148,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                                 )
                             }
                             <AccordionBadgePicker<Model>
+                                className="mt-2"
                                 data={models}
                                 setData={setModels}
                                 title={other}

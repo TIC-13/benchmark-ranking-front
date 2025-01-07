@@ -23,6 +23,7 @@ export function getSelectedValues<T>(selectables: Selectable<T>[]) {
 }
 
 export type BadgePickerProps<T> = {
+    className?: string,
     data: Selectable<T>[],
     setData: React.Dispatch<React.SetStateAction<Selectable<T>[]>>,
     title: string,

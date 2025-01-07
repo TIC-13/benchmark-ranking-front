@@ -12,7 +12,7 @@ import { BadgePickerContent, BadgePickerProps } from "./BadgePicker";
 
 type AccordionBadgeSelectorProps<T> = BadgePickerProps<T>
 
-export default function AccordionBadgeSelector<T>({ data, setData, title, getItemName, showItem = (item) => true}: AccordionBadgeSelectorProps<T>) {
+export default function AccordionBadgeSelector<T>({ className, data, setData, title, getItemName, showItem = (item) => true}: AccordionBadgeSelectorProps<T>) {
 
     const [checked, setChecked] = useState(true)
 
@@ -33,10 +33,11 @@ export default function AccordionBadgeSelector<T>({ data, setData, title, getIte
 
     return (
         <AccordionItem
+            className={className}
             value={title}
         >
             <AccordionTrigger>
-                <div className="flex flex-1 flex-row justify-between items-center flex-wrap gap-y-5">
+                <div className="flex flex-1 flex-row justify-between items-center flex-wrap">
                     {title}
                     <div className="flex items-center space-x-2 pr-5">
                         <Switch

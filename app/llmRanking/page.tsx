@@ -19,7 +19,7 @@ import { getSelectedValues, Selectable } from "@/components/custom/BadgePicker";
 import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
 import phoneNames from "@/app/src/utils/phone_names.json"
 import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
-
+import WrapSeparatorBottom from "@/components/custom/WrapSeparatorBottom";
 
 export default function DataQueryLayer() {
 
@@ -71,7 +71,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text={dict.title} />
             </div>
-            <p className="max-w-2xl">{dict.description}</p>
+            <p>{dict.description}</p>
             <Accordion type="multiple">
                 <DefaultAccordionItem
                     value="help"
@@ -80,6 +80,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
                     {
                         dict.help.content.map(({ value, label, content }) =>
                             <DefaultAccordionItem
+                                className="mt-3"
                                 value={value}
                                 triggerLabel={label}
                             >
@@ -92,18 +93,21 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
             </Accordion>
             <DefaultCard
                 title={dict.filters.title}
-                subtitle=""
-                contentClassName="flex flex-col gap-y-10"
+                contentClassName="flex flex-col gap-y-5"
             >
-                <RadioButtonsGroup<DisplayMode>
-                    items={radioOptions}
-                    setPickedItem={setMode}
-                />
-                <SwitchWithLabel
-                    label={dict.filters.toggles.conversationNumber}
-                    checked={showSamples}
-                    onCheckedChange={setShowSamples}
-                />
+                <WrapSeparatorBottom>
+                    <RadioButtonsGroup<DisplayMode>
+                        items={radioOptions}
+                        setPickedItem={setMode}
+                    />
+                </WrapSeparatorBottom>
+                <WrapSeparatorBottom>
+                    <SwitchWithLabel
+                        label={dict.filters.toggles.conversationNumber}
+                        checked={showSamples}
+                        onCheckedChange={setShowSamples}
+                    />
+                </WrapSeparatorBottom>
                 <Accordion type="multiple" value={items} onValueChange={setItems}>
                     <AccordionBadgePicker
                         data={models}
