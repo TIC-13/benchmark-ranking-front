@@ -35,6 +35,11 @@
                     "value": "result",
                     "label": "Como os valores do ranking são calculados?",
                     "content": "Os valores do ranking são representados em milissegundos, sendo obtidos por meio de uma média ponderada que leva em conta o número de imagens usados para a execução de cada teste. Apenas inferências que cumprem os critérios representados no filtro são consideradas."
+                }, 
+                {
+                    "value": "gpu",
+                    "label": "Por que o consumo de GPU não está aparecendo?",
+                    "content": "Alguns modelos de celulares não possibilitam a coleta da estatística do uso da GPU, por esse motivo alguns valores dessa medida podem estar ausentes."
                 }
             ]
         },
@@ -132,6 +137,11 @@
                     "value": "result",
                     "label": "Como os tokens por segundo são calculados?",
                     "content": "Os tokens por segundo são calculados por meio de uma média simples de todas as conversas."
+                },
+                {
+                    "value": "gpu",
+                    "label": "Por que o consumo de GPU não está aparecendo?",
+                    "content": "Alguns modelos de celulares não possibilitam a coleta da estatística do uso da GPU, por esse motivo alguns valores dessa medida podem estar ausentes."
                 }
             ]
         },

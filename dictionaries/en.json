@@ -35,6 +35,11 @@
                     "value": "result",
                     "label": "How are the ranking values calculated?",
                     "content": "The ranking values are represented in milliseconds and are obtained through a weighted average that takes into account the number of images used for each test execution. Only inferences that meet the criteria represented in the filter are considered."
+                },
+                {
+                    "value": "gpu",
+                    "label": "Why is GPU usage not appearing?",
+                    "content": "Some smartphone models do not allow the collection of GPU usage statistics, which is why some values for this measure may be missing."
                 }
             ]
         },
@@ -133,6 +138,11 @@
                     "value": "result",
                     "label": "How are tokens per second calculated?",
                     "content": "Tokens per second are calculated using a simple average of all conversations."
+                },
+                {
+                    "value": "gpu",
+                    "label": "Why is GPU usage not appearing?",
+                    "content": "Some smartphone models do not allow the collection of GPU usage statistics, which is why some values for this measure may be missing."
                 }
             ]
         },

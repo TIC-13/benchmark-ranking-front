@@ -105,6 +105,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     {
                         dict.help.content.map(({ value, label, content }) =>
                             <DefaultAccordionItem
+                                className="mt-3"
                                 value={value}
                                 triggerLabel={label}
                             >
