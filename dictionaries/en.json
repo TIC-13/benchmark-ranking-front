@@ -42,10 +42,10 @@
             "title": "My Filters",
             "subtitle": "Select models and quantizations to be used for calculating the results",
             "categories": {
-                "speed": "Speed (ms)",
-                "cpu": "CPU (%)",
-                "gpu": "GPU (%)",
-                "ram": "RAM (MB)"
+                "speed": "Inference time (ms)",
+                "cpu": "CPU Usage (%)",
+                "gpu": "GPU Usage (%)",
+                "ram": "RAM Usage (MB)"
             },
             "models": {
                 "label": "Models",
@@ -98,9 +98,9 @@
                 "total": "Tok/s (total)",
                 "prefill": "Tok/s (prefill)",
                 "decode": "Tok/s (decode)",
-                "cpu": "CPU (%)",
-                "gpu": "GPU (%)",
-                "ram": "RAM (MB)"
+                "cpu": "CPU Usage (%)",
+                "gpu": "GPU Usage (%)",
+                "ram": "RAM Usage (MB)"
             },
             "toggles": {
                 "conversationNumber": "Show the number of the device's conversations",

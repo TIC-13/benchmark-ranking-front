@@ -42,10 +42,10 @@
             "title": "Meus filtros",
             "subtitle": "Selecione modelos e quantizações que serão usados para calcular os resultados",
             "categories": {
-                "speed": "Velocidade (ms)",
-                "cpu": "CPU (%)",
-                "gpu": "GPU (%)",
-                "ram": "RAM (MB)"
+                "speed": "Tempo de inferência (ms)",
+                "cpu": "Uso de CPU (%)",
+                "gpu": "Uso de GPU (%)",
+                "ram": "Uso de RAM (MB)"
             },
             "models": {
                 "label": "Modelos",
@@ -97,9 +97,9 @@
                 "total": "Tok/s (total)",
                 "prefill": "Tok/s (prefill)",
                 "decode": "Tok/s (decode)",
-                "cpu": "CPU (%)",
-                "gpu": "GPU (%)",
-                "ram": "RAM (MB)"
+                "cpu": "Uso de CPU (%)",
+                "gpu": "Uso de GPU (%)",
+                "ram": "Uso de RAM (MB)"
             },
             "toggles": {
                 "conversationNumber": "Mostrar número de conversas do dispositivo",
