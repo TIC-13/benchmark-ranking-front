@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
 import { DataTable } from "@/components/custom/DataTable";
 import { DisplayModeVision, getColumns } from "./columns";
@@ -9,22 +9,19 @@ import useVisionRanking from "./hooks/useVisionRanking";
 import MainContainer from "@/components/custom/MainContainer";
 import { LoadingFullScreen } from "@/components/custom/LoadingFullScreen";
 import useModels, { Model } from "./hooks/useModels";
-import {
-    Accordion
-} from "@/components/ui/accordion"
+import { Accordion } from "@/components/ui/accordion"
 import useQuantizations from "./hooks/useQuantizations";
-import AccordionInCard from "@/components/custom/AccordionInCard";
 import DefaultCard from "@/components/custom/DefaultCard";
 import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/custom/AccordionBadgePicker";
 import DefaultAccordionItem from "@/components/custom/DefaultAccordionItem";
 import { Separator } from "@/components/custom/Separator";
 import { useDictionary } from "@/components/providers/DictionaryProvider";
 import SwitchWithLabel from "@/components/custom/SwitchWithLabel";
-import TextWarning from "@/components/custom/TextWarning";
 import BadgePicker, { getSelectedValues, Selectable } from "@/components/custom/BadgePicker";
 import phoneNames from "@/app/src/utils/phone_names.json"
 import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
 import WrapSeparatorBottom from "@/components/custom/WrapSeparatorBottom";
+import HelpAccordion from "@/components/custom/HelpAccordion";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -97,25 +94,10 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                 <TypographyH2 text={dict.title} />
             </div>
             <p>{dict.description}</p>
-            <Accordion type="multiple">
-                <DefaultAccordionItem
-                    value="help"
-                    triggerLabel={dict.help.label}
-                >
-                    {
-                        dict.help.content.map(({ value, label, content }) =>
-                            <DefaultAccordionItem
-                                className="mt-3"
-                                value={value}
-                                triggerLabel={label}
-                            >
-                                <p>{content}</p>
-                            </DefaultAccordionItem>
-
-                        )
-                    }
-                </DefaultAccordionItem>
-            </Accordion>
+            <HelpAccordion
+                helpLabel={dict.help.label}
+                helpContent={dict.help.content}
+            />
             <DefaultCard
                 title={dict.filters.title}
                 contentClassName="flex flex-col gap-y-5"

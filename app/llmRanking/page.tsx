@@ -20,6 +20,7 @@ import AccordionBadgePicker, { useAccordionBadgePicker } from "@/components/cust
 import phoneNames from "@/app/src/utils/phone_names.json"
 import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
 import WrapSeparatorBottom from "@/components/custom/WrapSeparatorBottom";
+import HelpAccordion from "@/components/custom/HelpAccordion";
 
 export default function DataQueryLayer() {
 
@@ -72,25 +73,10 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
                 <TypographyH2 text={dict.title} />
             </div>
             <p>{dict.description}</p>
-            <Accordion type="multiple">
-                <DefaultAccordionItem
-                    value="help"
-                    triggerLabel={dict.help.label}
-                >
-                    {
-                        dict.help.content.map(({ value, label, content }) =>
-                            <DefaultAccordionItem
-                                className="mt-3"
-                                value={value}
-                                triggerLabel={label}
-                            >
-                                <p>{content}</p>
-                            </DefaultAccordionItem>
-
-                        )
-                    }
-                </DefaultAccordionItem>
-            </Accordion>
+            <HelpAccordion
+                helpLabel={dict.help.label}
+                helpContent={dict.help.content}
+            />
             <DefaultCard
                 title={dict.filters.title}
                 contentClassName="flex flex-col gap-y-5"
