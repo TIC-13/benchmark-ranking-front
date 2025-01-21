@@ -96,7 +96,7 @@ export const getColumns = (mode: DisplayModeVision = "speed"): ColumnDef<Inferen
         },
         getColumnDef("CPU", mode),
         getColumnDef("GPU", mode),
-        getColumnDef("NNAPI", mode)
+        //getColumnDef("NNAPI", mode)
     ]
 
 function getColumnDef(rowName: string, mode: DisplayModeVision = "speed"): ColumnDef<Inference> {
