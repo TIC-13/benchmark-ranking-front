@@ -22,6 +22,7 @@ import phoneNames from "@/app/src/utils/phone_names.json"
 import RadioButtonsGroup, { RadioItem } from "@/components/custom/RadioButtonsGroup";
 import WrapSeparatorBottom from "@/components/custom/WrapSeparatorBottom";
 import HelpAccordion from "@/components/custom/HelpAccordion";
+import { RankingDescription } from "@/components/custom/RankingDescription";
 
 export default function DataQueryLayer() {
     const modelsQuery = useModels()
@@ -93,7 +94,17 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
             <div className="flex flex-1 justify-between">
                 <TypographyH2 text={dict.title} />
             </div>
-            <p>{dict.description}</p>
+
+            <RankingDescription
+                description={dict.description}
+                cardProps={{
+                    title: dict.appCard.title,
+                    text: dict.appCard.description,
+                    imgSrc: "/red_llama.png",
+                    link: "https://luxai.cin.ufpe.br/benchmarks.html"
+                }}
+            />
+
             <HelpAccordion
                 helpLabel={dict.help.label}
                 helpContent={dict.help.content}
