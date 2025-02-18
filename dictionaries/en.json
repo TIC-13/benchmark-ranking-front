@@ -30,7 +30,7 @@
         "description": "This ranking classifies Android smartphones based on the data collected by the Speed.AI app, which benchmarks AI models natively on Android devices.",
         "appCard": {
             "title": "Speed.AI - AI Benchmarking",
-            "description": "App used to rank the smartphones. Available on GitHub."
+            "description": "App used to rank the smartphones. Available on the PlayStore and GitHub."
         },
         "help": {
             "label": "Help",

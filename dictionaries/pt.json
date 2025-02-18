@@ -29,7 +29,7 @@
         "title": "Ranking de modelos de visão",
         "appCard": {
             "title": "Speed.AI - AI Benchmarking",
-            "description": "App usado para classificar os smartphones. Disponível no GitHub."
+            "description": "App usado para classificar os smartphones. Disponível na PlayStore e no GitHub."
         },
         "description": "Esse ranking classifica smartphones Android pelos valores coletados no aplicativo Speed.AI, que faz benchmarking de modelos de inteligência artificial nativamente em aparelhos Android.",
         "help": {
