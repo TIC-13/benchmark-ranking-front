@@ -53,20 +53,20 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
     const { llmRanking: dict } = dictionary
 
     const [showSamples, setShowSamples] = useState(false)
-    const [mode, setMode] = useState<DisplayMode>("total")
     const [models, setModels] = useState(modelsFetched)
     const { items, setItems } = useAccordionBadgePicker([{ value: dict.filters.models.label, label: dict.filters.models.label }])
 
-    const { total, prefill, decode, cpu, gpu, ram } = dict.filters.mode
+    const { prefill, decode,  ram } = dict.filters.mode
 
     const radioOptions: RadioItem<DisplayMode>[] = [
-        { value: "total", label: total },
         { value: "prefill", label: prefill },
         { value: "decode", label: decode },
         //{ value: "cpu", label: cpu },
-        { value: "gpu", label: gpu },
+        //{ value: "gpu", label: gpu },
         { value: "ram", label: ram }
     ]
+
+    const [mode, setMode] = useState<DisplayMode>(radioOptions[0].value)
 
     return (
         <MainContainer>

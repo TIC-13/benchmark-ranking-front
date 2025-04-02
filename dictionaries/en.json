@@ -108,9 +108,8 @@
             "title": "Ranking settings",
             "subtitle": "Select models and quantizations to be used for calculating the results",
             "mode": {
-                "total": "Tok/s (total)",
-                "prefill": "Tok/s (prefill)",
-                "decode": "Tok/s (decode)",
+                "prefill": "Prefill (seconds)",
+                "decode": "Decode (tok/s)",
                 "cpu": "CPU Usage (%)",
                 "gpu": "GPU Usage (%)",
                 "ram": "RAM Usage (MB)"
@@ -130,7 +129,7 @@
                 {
                     "value": "prefill",
                     "label": "What is prefill?",
-                    "content": "Prefill tok/s measures how many tokens the model can process per second during the initial setup phase."
+                    "content": "Time required for the LLM to process the user's input and start generating a response."
                 },
                 {
                     "value": "decode",
@@ -149,8 +148,8 @@
                 },
                 {
                     "value": "gpu",
-                    "label": "Why is GPU usage not appearing?",
-                    "content": "Some smartphone models do not allow the collection of GPU usage statistics, which is why some values for this measure may be missing."
+                    "label": "Why don't we display CPU or GPU consumption?",
+                    "content": "Currently, the Android platform does not allow the collection of CPU usage statistics by applications. Meanwhile, the GPU is not used because the LLM execution framework relies on the CPU."
                 }
             ]
         },

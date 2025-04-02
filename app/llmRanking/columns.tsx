@@ -30,13 +30,12 @@ export type Phone = {
     phone_model: string
 }
 
-export type DisplayMode = "prefill" | "decode" | "total" | "cpu" | "gpu" | "ram"
+export type DisplayMode = "prefill" | "decode" | "cpu" | "gpu" | "ram"
 
 export function isDisplayMode(mode: string): mode is DisplayMode {
     return (
         mode === "prefill" ||
         mode === "decode" ||
-        mode === "total" ||
         mode === "cpu" ||
         mode === "gpu" ||
         mode === "ram"
@@ -58,20 +57,12 @@ const displayModeConfigs: Record<DisplayMode, {
 }> = {
     prefill: {
         getValue: numericGetter("prefill"),
-        getDisplayValue: (v) => formatValue(v?.prefill, "tok/s"),
+        getDisplayValue: (v) => formatValue(v?.prefill ? parseFloat((v.prefill/1000).toFixed(1)): null, "s"),
         sortMode: "desc"
     },
     decode: {
         getValue: numericGetter("decode"),
         getDisplayValue: (v) => formatValue(v?.decode, "tok/s"),
-        sortMode: "desc"
-    },
-    total: {
-        getValue: (v) => (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined,
-        getDisplayValue: (v) => {
-            const val = (v?.prefill !== undefined && v?.decode !== undefined) ? v.prefill + v.decode : undefined;
-            return formatValue(val, "tok/s");
-        },
         sortMode: "desc"
     },
     cpu: {
