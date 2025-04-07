@@ -58,7 +58,7 @@ const displayModeConfigs: Record<DisplayMode, {
     prefill: {
         getValue: numericGetter("prefill"),
         getDisplayValue: (v) => formatValue(v?.prefill ? parseFloat((v.prefill/1000).toFixed(1)): null, "s"),
-        sortMode: "desc"
+        sortMode: "asc"
     },
     decode: {
         getValue: numericGetter("decode"),
