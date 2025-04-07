@@ -1,7 +1,7 @@
 "use client"
 
 import { Column, ColumnDef, Row } from "@tanstack/react-table"
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { ArrowUpDown, ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { formatNumber } from "../src/utils/formatNumber"
 import { useDictionary } from "@/components/providers/DictionaryProvider"
@@ -182,7 +182,7 @@ function getHeader() {
                     {dict.llmRanking.table.columns.result.header}
                     {
                         sortStatus !== false ?
-                            (sortStatus === "asc" ? <ArrowDown className={iconClass} /> : <ArrowUp className={iconClass} />)
+                            (sortStatus === "asc" ? <ArrowDownRight className={iconClass} /> : <ArrowUpRight className={iconClass} />)
                             : <ArrowUpDown className={iconClass} />
                     }
                 </Button>
