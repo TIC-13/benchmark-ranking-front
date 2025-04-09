@@ -69,7 +69,7 @@ export default function NavBar() {
           text={dict.links.llmRanking}
         />
         <PageLink
-          href="/info"
+          href="/about"
           text={dict.links.about}
         />
       </>
@@ -93,7 +93,7 @@ export default function NavBar() {
           <DropdownMenuItem onClick={() => router.push("/llmRanking")}>
             {dict.links.llmRanking}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/info")}>
+          <DropdownMenuItem onClick={() => router.push("/about")}>
             {dict.links.about}
           </DropdownMenuItem>
 

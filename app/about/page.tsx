@@ -23,10 +23,13 @@ type TextSectionProps = {
 }
 
 function TextSection({ title, content }: TextSectionProps) {
-    const formattedContent = content.split('\n').map((line, index) => {
+    
+    const lines = content.split('\n\n')
+    
+    const formattedContent = lines.map((line, index) => {
         if (line.trim() === "") {
             return null;
-        } else {
+        }else{
             return <TypographyP text={line}/>;
         }
     });

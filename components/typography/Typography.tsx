@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils"
+import { ReactNode } from "react"
 
 type TypographyProps = {
-    text: string,
+    text: string | ReactNode,
     className?: string
 }
 
