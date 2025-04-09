@@ -1,5 +1,5 @@
-import en from "@/dictionaries/en.json"
-import pt from "@/dictionaries/pt.json"
+import en from "@/dictionaries/en"
+import pt from "@/dictionaries/pt"
 
 const dictionaries = {
   en, 
