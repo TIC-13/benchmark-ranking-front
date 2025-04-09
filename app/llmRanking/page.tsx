@@ -96,6 +96,7 @@ function PageLayer({ modelsFetched }: PageLayerProps) {
                     <RadioButtonsGroup<DisplayMode>
                         items={radioOptions}
                         setPickedItem={setMode}
+                        bold={true}
                     />
                 </WrapSeparatorBottom>
                 <WrapSeparatorBottom>

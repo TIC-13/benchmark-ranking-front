@@ -117,6 +117,7 @@ function PageLayer({ modelsList, quantizationsList }: PageLayerProps) {
                     <RadioButtonsGroup<DisplayModeVision>
                         items={radioOptions}
                         setPickedItem={setMode}
+                        bold={true}
                     />
                 </WrapSeparatorBottom>
                 <Accordion type="multiple" className="max-w-l">

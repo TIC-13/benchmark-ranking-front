@@ -8,10 +8,11 @@ export type RadioItem<T extends string> = {
 
 type RadioButtonsGroupProps<T extends string> = {
     items: RadioItem<T>[],
-    setPickedItem: (value: T) => void
+    setPickedItem: (value: T) => void,
+    bold?: boolean
 }
 
-function RadioButtonsGroup<T extends string>({ items, setPickedItem }: RadioButtonsGroupProps<T>) {
+function RadioButtonsGroup<T extends string>({ items, setPickedItem, bold=false }: RadioButtonsGroupProps<T>) {
     return (
         <RadioGroup
             defaultValue={items[0].value}
@@ -22,7 +23,11 @@ function RadioButtonsGroup<T extends string>({ items, setPickedItem }: RadioButt
                 items.map(({ value, label }) =>
                     <div key={value} className="flex flex-1 items-center space-x-2">
                             <RadioGroupItem value={value} id={value} />
-                            <Label htmlFor={value} className="flex-1 w-20">{label}</Label>
+                            <Label htmlFor={value} className="flex-1 w-20">
+                                {
+                                    bold ? <strong>{label}</strong> : label
+                                }
+                            </Label>
                     </div>
                 )
             }
