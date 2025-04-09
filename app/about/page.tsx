@@ -19,25 +19,16 @@ export default function InfoPage() {
 
 type TextSectionProps = {
     title: string,
-    content: string
+    content: JSX.Element
 }
 
 function TextSection({ title, content }: TextSectionProps) {
-    
-    const lines = content.split('\n\n')
-    
-    const formattedContent = lines.map((line, index) => {
-        if (line.trim() === "") {
-            return null;
-        }else{
-            return <TypographyP text={line}/>;
-        }
-    });
 
     return (
         <div>
             <TypographyH2 text={title} />
-            {formattedContent}
+            <br/>
+            {content}
         </div>
     );
 }
