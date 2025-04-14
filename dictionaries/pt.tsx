@@ -101,7 +101,7 @@ export default {
     description: "Esse ranking classifica smartphones Android pelos valores coletados no aplicativo Speed.AI LLM Version, que faz benchmarking de LLMs (Large Language Models, como Llama e Gemma) em aparelhos Android, usando a plataforma MLC LLM para a execução dos modelos.",
     appCard: {
       title: "Speed.AI - LLM Version",
-      description: "App usado para classificar os smartphones. Disponível no GitHub."
+      description: "App usado para classificar os smartphones. Disponível na PlayStore e no GitHub."
     },
     filters: {
       title: "Configurações do ranking",
