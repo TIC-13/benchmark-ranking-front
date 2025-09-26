@@ -32,4 +32,15 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
    yarn run dev
    ```
 
+## Running in Production Using Docker
+
+To start the container, run:
+
+```bash
+docker compose up app
+```
+
+You can set the following environment variable in a `.env` file:
+
+* `DOCKER_EXPOSED_PORT`: Port on the host machine to access the application (default: `8082`)
 
